@@ -1,0 +1,18 @@
+kind: source
+spec:
+  name: "cq-source-xkcd"
+  registry: "local"
+  path: "/home/luanrjjj/repositories/xqcdcloudquery/cq-source-xqcd/cq-source-xqcd"
+  version: "v1.0.0"
+  tables:
+    ["*"]
+  destinations:
+    - "sqlite"
+---
+kind: destination
+spec:
+  name: sqlite
+  path: cloudquery/sqlite
+  version: "v1.2.1"
+  spec:
+    connection_string: ./db.sql

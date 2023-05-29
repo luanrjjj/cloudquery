@@ -1,0 +1,8 @@
+kind: source
+spec:
+  name: "cq-source-xqcd"
+  registry: "grpc"
+  path: "localhost:7778"
+  version: "v1.0.0"
+  tables: ['*']
+  destinations: ["sqlite"]

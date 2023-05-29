@@ -1,0 +1,5 @@
+Com GRPC só funcionou  da seguinte maneira:
+
+
+Pra rodar o servidor grpc é necssário ir na pasta do plugin e rodar: go run main.go serve ---address localhost:7778
+Criando arquivo config e rodando "go run main.go sync ../config" na pasta cli
