@@ -1,0 +1,8 @@
+kind: source
+spec:
+  name: "cq-source-newrelic"
+  registry: "grpc"
+  path: "localhost:7777"
+  version: "v2.2.1"
+  tables: ['*']
+  destinations: ["sqlite"]
