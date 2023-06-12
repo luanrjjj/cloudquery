@@ -3,11 +3,13 @@ package client
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/cloudquery/plugin-pb-go/specs"
 	"github.com/cloudquery/plugin-sdk/v3/plugins/source"
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 
+	"github.com/newrelic/newrelic-client-go/v2/newrelic"
 	"github.com/rs/zerolog"
 )
 
@@ -17,24 +19,36 @@ type Client struct {
 	Accounts []Account
 
 	multiplexedAccount Account
-	// DDServices         DatadogServices
-
+	NRServices         NewRelicServices
 }
 
 func (c *Client) ID() string {
 	// TODO: Change to either your plugin name or a unique dynamic identifier
-	return &c.logger
+	return "newrelic"
 }
+
+
+
 
 func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source.Options) (schema.ClientMeta, error) {
 	var pluginSpec Spec
+	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
+
+	configuration := newrelic.ConfigPersonalAPIKey(os.Getenv("NEW_RELIC_API_KEY"))
+	apiClient, err := newrelic.New(configuration)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to create newrelic client: %w", err)
+	}
 
 	if err := s.UnmarshalSpec(&pluginSpec); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal plugin spec: %w", err)
 	}
-	// TODO: Add your client initialization here
 
-	return &Client{
-		logger: logger,
-	}, nil
+	client := Client{
+		logger:     logger,
+		NRServices: NewRelicServices(apiClient),
+	}
+
+	return &client, nil
 }
