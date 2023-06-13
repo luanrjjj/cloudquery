@@ -27,7 +27,6 @@ func SampleTable() *schema.Table {
 }
 
 func getAlerts(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- interface{}) error {
-	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
 
 	client, err := newrelic.New(newrelic.ConfigPersonalAPIKey(os.Getenv("NEW_RELIC_API_KEY")))
 
@@ -50,7 +49,6 @@ func getAlerts(ctx context.Context, meta schema.ClientMeta, parent *schema.Resou
 
 func BuildContext(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- interface{}) error {
 	// c := meta
-	// os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
 	// fmt.Println("ushduasdhauhduasdhsauh", os.Getenv("NEW_RELIC_API_KEY"))
 	// value, err := newrelic.New(newrelic.ConfigPersonalAPIKey(os.Getenv("NEW_RELIC_API_KEY")))
 	// // fmt.Println("ushduasdhauhduasdhsauh", err)
