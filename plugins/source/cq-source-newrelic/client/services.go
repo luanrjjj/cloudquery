@@ -1,12 +1,16 @@
 package client
 
 import (
-	"context"
-	"net/http"
-
-	"github.com/newrelic/newrelic-client-go/v2/pkg/alerts"
+	"github.com/newrelic/cq-source-newrelic/client/services"
+	"github.com/newrelic/newrelic-client-go/v2/newrelic"
 )
 
-type NewRelicServices interface {
-	ListAlerts(context.Context) (alerts.ListPoliciesParams, *http.Response, error)
+type NewRelicServices struct {
+	AlertsAPI services.AlertsAPIClient
+}
+
+func NewNewRelicServices(apiClient *newrelic.NewRelic) NewRelicServices {
+	return NewRelicServices{
+		AlertsAPI: newrelic.Alerts.ListPolcies(apiClient),
+	}
 }

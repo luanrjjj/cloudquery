@@ -8,5 +8,5 @@ import (
 )
 
 type AlertsAPIClient interface {
-	ListAlerts(context.Context) (alerts.ListPoliciesParams, *http.Response, error)
+	ListPolicies(context.Context) (alerts.ListPoliciesParams, *http.Response, error)
 }

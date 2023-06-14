@@ -10,16 +10,14 @@ import (
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 
 	"github.com/newrelic/newrelic-client-go/v2/newrelic"
+	"github.com/newrelic/newrelic-client-go/v2/pkg/alerts"
 	"github.com/rs/zerolog"
 )
 
 type Client struct {
 	logger zerolog.Logger
 
-	Accounts []Account
-
-	multiplexedAccount Account
-	NRServices         NewRelicServices
+	// NRServices NewRelicServices
 }
 
 func (c *Client) ID() string {
@@ -27,14 +25,13 @@ func (c *Client) ID() string {
 	return "newrelic"
 }
 
-
-
-
 func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source.Options) (schema.ClientMeta, error) {
 	var pluginSpec Spec
 	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
 
-	configuration := newrelic.ConfigPersonalAPIKey(os.Getenv("NEW_RELIC_API_KEY"))
+	token := getApiTokenFromEnv()
+
+	configuration := newrelic.ConfigPersonalAPIKey(token)
 	apiClient, err := newrelic.New(configuration)
 
 	if err != nil {
@@ -45,10 +42,30 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 		return nil, fmt.Errorf("failed to unmarshal plugin spec: %w", err)
 	}
 
+	policies, err := apiClient.Alerts.ListPolicies(&alerts.ListPoliciesParams{
+		Name: "Bewiz",
+	})
+
+	if err != nil {
+		fmt.Printf("err: %v+\n", policies)
+	}
+
+	fmt.Println("The value is: %v\n", policies)
+
 	client := Client{
-		logger:     logger,
-		NRServices: NewRelicServices(apiClient),
+		logger: logger,
+		// NRServices: NewRelicServices(apiClient),
 	}
 
 	return &client, nil
+}
+
+func getApiTokenFromEnv() string {
+	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
+	apiToken := os.Getenv("NEW_RELIC_API_KEY")
+
+	if apiToken == "" {
+		return ""
+	}
+	return apiToken
 }

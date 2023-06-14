@@ -3,15 +3,16 @@ module github.com/newrelic/cq-source-newrelic
 go 1.19
 
 require (
-	github.com/apache/arrow/go/v13 v13.0.0-20230529174423-1951a1ae6959
 	github.com/cloudquery/plugin-pb-go v1.0.8
 	github.com/cloudquery/plugin-sdk/v3 v3.6.7
 	github.com/newrelic/newrelic-client-go/v2 v2.19.1
 	github.com/rs/zerolog v1.29.1
+	golang.org/x/sync v0.1.0
 )
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
+	github.com/apache/arrow/go/v13 v13.0.0-20230529174423-1951a1ae6959 // indirect
 	github.com/apache/thrift v0.16.0 // indirect
 	github.com/cloudquery/plugin-sdk/v2 v2.7.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -50,7 +51,6 @@ require (
 	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
 	golang.org/x/mod v0.8.0 // indirect
 	golang.org/x/net v0.9.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/tools v0.6.0 // indirect
