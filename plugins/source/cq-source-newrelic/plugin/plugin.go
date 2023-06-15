@@ -5,7 +5,6 @@ import (
 	"github.com/newrelic/cq-source-newrelic/resources"
 
 	"github.com/cloudquery/plugin-sdk/v3/plugins/source"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
 )
 
 var (
@@ -16,9 +15,7 @@ func Plugin() *source.Plugin {
 	return source.NewPlugin(
 		"newrelic-newrelic",
 		Version,
-		schema.Tables{
-			resources.SampleTable(),
-		},
+		resources.Tables(),
 		client.New,
 	)
 }

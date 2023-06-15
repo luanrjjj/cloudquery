@@ -10,14 +10,23 @@ import (
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 
 	"github.com/newrelic/newrelic-client-go/v2/newrelic"
-	"github.com/newrelic/newrelic-client-go/v2/pkg/alerts"
 	"github.com/rs/zerolog"
 )
 
 type Client struct {
 	logger zerolog.Logger
 
-	NRServices NewRelicServices
+	Services *Services
+}
+
+type Services struct {
+	Alert AlertService
+}
+
+func initServices(apiClient *newrelic.NewRelic) *Services {
+	return &Services{
+		Alert: &apiClient.Alerts,
+	}
 }
 
 func (c *Client) ID() string {
@@ -26,11 +35,7 @@ func (c *Client) ID() string {
 }
 
 func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source.Options) (schema.ClientMeta, error) {
-	var pluginSpec Spec
-	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
-
 	token := getApiTokenFromEnv()
-
 	configuration := newrelic.ConfigPersonalAPIKey(token)
 	apiClient, err := newrelic.New(configuration)
 
@@ -38,27 +43,9 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 		return nil, fmt.Errorf("failed to create newrelic client: %w", err)
 	}
 
-	if err := s.UnmarshalSpec(&pluginSpec); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal plugin spec: %w", err)
-	}
-
-	valor := NewNewRelicServices
-
-	fmt.Println("pluginSpec: %v+\n", &valor)
-
-	policies, err := apiClient.Alerts.ListPolicies(&alerts.ListPoliciesParams{
-		Name: "Bewiz",
-	})
-
-	if err != nil {
-		fmt.Printf("err: %v+\n", policies)
-	}
-
-	fmt.Println("The value is: %v\n", policies)
-
 	client := Client{
-		logger: logger,
-		// NRServices:,
+		logger:   logger,
+		Services: initServices(apiClient),
 	}
 
 	return &client, nil

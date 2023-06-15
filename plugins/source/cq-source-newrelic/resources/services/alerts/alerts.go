@@ -3,28 +3,22 @@ package alerts
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 	"github.com/cloudquery/plugin-sdk/v3/transformers"
 
-	"github.com/newrelic/newrelic-client-go/v2/newrelic"
 	"github.com/newrelic/newrelic-client-go/v2/pkg/alerts"
 
+	"github.com/newrelic/cq-source-newrelic/client"
 	"golang.org/x/sync/errgroup"
 )
 
-type Comic struct {
-	ID int `json:"id"`
-}
-
-func AlertsAPI() *schema.Table {
+func Alerts() *schema.Table {
 	return &schema.Table{
 		Name:     "new_relic_alerts",
 		Resolver: getAlerts,
 		// Multiplex: client.AccountMultiplex,
-		// Resolver:  BuildContext,
-		Transform: transformers.TransformWithStruct(Comic{}),
+		Transform: transformers.TransformWithStruct(&alerts.Policy{}),
 		// Transform: transformers.TransformWithStruct(&datadogV2.IncidentResponseData{}),
 		// Columns: []schema.Column{
 		// 	{
@@ -44,17 +38,12 @@ func AlertsAPI() *schema.Table {
 }
 
 func getAlerts(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- interface{}) error {
-	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
+	svc := meta.(*client.Client)
 
-	client, err := newrelic.New(newrelic.ConfigPersonalAPIKey(os.Getenv("NEW_RELIC_API_KEY")))
-
-	if err != nil {
-		fmt.Printf("err: %v+\n", client)
-	}
-
-	policies, err := client.Alerts.ListPolicies(&alerts.ListPoliciesParams{
+	policies, err := svc.Services.Alert.ListPolicies(&alerts.ListPoliciesParams{
 		Name: "Example policy",
 	})
+
 	if err != nil {
 		fmt.Printf("err: %v+\n", policies)
 	}

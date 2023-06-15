@@ -1,16 +1,10 @@
 package client
 
 import (
-	"github.com/newrelic/cq-source-newrelic/client/services"
-	"github.com/newrelic/newrelic-client-go/v2/newrelic"
+	"github.com/newrelic/newrelic-client-go/v2/pkg/alerts"
 )
 
-type NewRelicServices struct {
-	AlertsAPI services.AlertsAPIClient
-}
-
-func NewNewRelicServices(apiClient *newrelic.NewRelic) NewRelicServices {
-	return NewRelicServices{
-		AlertsAPI: &apiClient.Alerts,
-	}
+type AlertService interface {
+	ListPolicies(*alerts.ListPoliciesParams) ([]alerts.Policy, error)
+	CreatePolicy(alerts.Policy) (*alerts.Policy, error)
 }
