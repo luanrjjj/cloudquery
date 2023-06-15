@@ -11,6 +11,6 @@ type NewRelicServices struct {
 
 func NewNewRelicServices(apiClient *newrelic.NewRelic) NewRelicServices {
 	return NewRelicServices{
-		AlertsAPI: newrelic.Alerts.ListPolcies(apiClient),
+		AlertsAPI: &apiClient.Alerts,
 	}
 }

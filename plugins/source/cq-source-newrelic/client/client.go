@@ -17,7 +17,7 @@ import (
 type Client struct {
 	logger zerolog.Logger
 
-	// NRServices NewRelicServices
+	NRServices NewRelicServices
 }
 
 func (c *Client) ID() string {
@@ -42,6 +42,10 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 		return nil, fmt.Errorf("failed to unmarshal plugin spec: %w", err)
 	}
 
+	valor := NewNewRelicServices
+
+	fmt.Println("pluginSpec: %v+\n", &valor)
+
 	policies, err := apiClient.Alerts.ListPolicies(&alerts.ListPoliciesParams{
 		Name: "Bewiz",
 	})
@@ -54,7 +58,7 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 
 	client := Client{
 		logger: logger,
-		// NRServices: NewRelicServices(apiClient),
+		// NRServices:,
 	}
 
 	return &client, nil

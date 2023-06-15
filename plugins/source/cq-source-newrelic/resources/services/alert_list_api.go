@@ -18,9 +18,9 @@ type Comic struct {
 	ID int `json:"id"`
 }
 
-func Alerts() *schema.Table {
+func AlertsAPI() *schema.Table {
 	return &schema.Table{
-		Name:     "datadog_alerts",
+		Name:     "new_relic_alerts",
 		Resolver: getAlerts,
 		// Multiplex: client.AccountMultiplex,
 		// Resolver:  BuildContext,
