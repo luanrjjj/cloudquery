@@ -41,8 +41,10 @@ func getAlerts(ctx context.Context, meta schema.ClientMeta, parent *schema.Resou
 	svc := meta.(*client.Client)
 
 	policies, err := svc.Services.Alert.ListPolicies(&alerts.ListPoliciesParams{
-		Name: "Example policy",
+		Name: "Bewiz",
 	})
+
+	fmt.Printf("err: %v+\n", policies)
 
 	if err != nil {
 		fmt.Printf("err: %v+\n", policies)

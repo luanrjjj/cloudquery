@@ -20,12 +20,16 @@ type Client struct {
 }
 
 type Services struct {
-	Alert AlertService
+	Alert  AlertService
+	APM    ApplicationService
+	Plugin PluginService
 }
 
 func initServices(apiClient *newrelic.NewRelic) *Services {
 	return &Services{
-		Alert: &apiClient.Alerts,
+		Alert:  &apiClient.Alerts,
+		APM:    &apiClient.APM,
+		Plugin: &apiClient.Plugins,
 	}
 }
 
