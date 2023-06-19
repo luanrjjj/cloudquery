@@ -14,9 +14,10 @@ import (
 )
 
 type Client struct {
-	logger zerolog.Logger
-
-	Services *Services
+	logger             zerolog.Logger
+	Accounts           []Account
+	Services           *Services
+	multiplexedAccount Account
 }
 
 type Services struct {
@@ -37,10 +38,30 @@ func initServices(apiClient *newrelic.NewRelic) *Services {
 
 func (c *Client) ID() string {
 	// TODO: Change to either your plugin name or a unique dynamic identifier
-	return "newrelic"
+	return c.multiplexedAccount.Name
+
+}
+
+func (c *Client) withAccount(account Account) schema.ClientMeta {
+	return &Client{
+		logger:             c.logger,
+		Services:           c.Services,
+		Accounts:           c.Accounts,
+		multiplexedAccount: account,
+	}
 }
 
 func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source.Options) (schema.ClientMeta, error) {
+	cfSpec := &Spec{}
+
+	if err := s.UnmarshalSpec(cfSpec); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	if len(cfSpec.Accounts) == 0 {
+		return nil, fmt.Errorf("no new relic accounts configured")
+	}
+
 	token := getApiTokenFromEnv()
 	configuration := newrelic.ConfigPersonalAPIKey(token)
 	apiClient, err := newrelic.New(configuration)
