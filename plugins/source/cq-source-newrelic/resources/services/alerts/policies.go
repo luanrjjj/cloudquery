@@ -21,12 +21,12 @@ func Policies() *schema.Table {
 		Multiplex: client.AccountMultiplex,
 		Transform: transformers.TransformWithStruct(&alerts.Policy{}),
 		Columns: []schema.Column{
-			// {
-			// 	Name:       "account_name",
-			// 	Type:       arrow.BinaryTypes.String,
-			// 	Resolver:   client.ResolveAccountName,
-			// 	PrimaryKey: true,
-			// },
+			{
+				Name:       "account_name",
+				Type:       arrow.BinaryTypes.String,
+				Resolver:   client.ResolveAccountName,
+				PrimaryKey: true,
+			},
 			{
 				Name:       "id",
 				Type:       arrow.BinaryTypes.String,

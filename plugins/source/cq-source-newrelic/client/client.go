@@ -3,7 +3,6 @@ package client
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/cloudquery/plugin-pb-go/specs"
 	"github.com/cloudquery/plugin-sdk/v3/plugins/source"
@@ -52,17 +51,16 @@ func (c *Client) withAccount(account Account) schema.ClientMeta {
 }
 
 func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source.Options) (schema.ClientMeta, error) {
-	cfSpec := &Spec{}
+	newRelicSpec := &Spec{}
 
-	if err := s.UnmarshalSpec(cfSpec); err != nil {
+	if err := s.UnmarshalSpec(newRelicSpec); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
-	if len(cfSpec.Accounts) == 0 {
+	if len(newRelicSpec.Accounts) == 0 {
 		return nil, fmt.Errorf("no new relic accounts configured")
 	}
 
-	token := getApiTokenFromEnv()
 	configuration := newrelic.ConfigPersonalAPIKey(token)
 	apiClient, err := newrelic.New(configuration)
 
@@ -78,12 +76,12 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 	return &client, nil
 }
 
-func getApiTokenFromEnv() string {
-	os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
-	apiToken := os.Getenv("NEW_RELIC_API_KEY")
+// func getApiTokenFromEnv() string {
+// 	// os.Setenv("NEW_RELIC_API_KEY", "NRAK-SMYODD87CECC7JNKN8JVKZRM32P")
+// 	apiToken := os.Getenv("NEW_RELIC_API_KEY")
 
-	if apiToken == "" {
-		return ""
-	}
-	return apiToken
-}
+// 	if apiToken == "" {
+// 		return ""
+// 	}
+// 	return apiToken
+// }
