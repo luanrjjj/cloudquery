@@ -11,6 +11,7 @@ import (
 func Tables() []*schema.Table {
 	return []*schema.Table{
 		alerts.Policies(),
+		alerts.Channels(),
 		applications.Applications(),
 		plugins.Plugins(),
 		// synthetics.Synthetics(),

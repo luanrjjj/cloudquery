@@ -9,6 +9,9 @@ import (
 
 type AlertService interface {
 	ListPolicies(*alerts.ListPoliciesParams) ([]alerts.Policy, error)
+	ListChannels() ([]*alerts.Channel, error)
+	//ListEvents(params *alerts.ListAlertEventsParams) ([]alerts.AlertEvent, error)
+	//ListIncidents(onlyOpen bool, excludeViolations bool) ([]alerts.Incident, error)
 }
 
 type ApplicationService interface {
