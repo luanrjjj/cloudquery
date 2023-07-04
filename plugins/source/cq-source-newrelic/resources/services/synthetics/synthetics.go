@@ -3,6 +3,7 @@ package synthetics
 import (
 	"context"
 	"fmt"
+	"github.com/apache/arrow/go/v13/arrow"
 
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 	"github.com/cloudquery/plugin-sdk/v3/transformers"
@@ -18,6 +19,14 @@ func Synthetics() *schema.Table {
 		Name:      "new_relic_synthetics",
 		Resolver:  getSynthetics,
 		Transform: transformers.TransformWithStruct(&plugins.Plugin{}),
+		Columns: []schema.Column{
+			{
+				Name:       "id",
+				Type:       arrow.PrimitiveTypes.Int64,
+				Resolver:   schema.PathResolver("Id"),
+				PrimaryKey: true,
+			},
+		},
 	}
 }
 
@@ -25,8 +34,6 @@ func getSynthetics(ctx context.Context, meta schema.ClientMeta, parent *schema.R
 	svc := meta.(*client.Client)
 
 	apps, err := svc.Services.Synthetic.ListMonitors()
-
-	fmt.Printf("err: %v+\n", apps)
 
 	if err != nil {
 		fmt.Printf("err: %v+\n", apps)

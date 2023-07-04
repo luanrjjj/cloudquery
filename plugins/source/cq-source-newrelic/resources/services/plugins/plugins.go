@@ -24,19 +24,17 @@ func Plugins() *schema.Table {
 func getPlugins(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- interface{}) error {
 	svc := meta.(*client.Client)
 
-	apps, err := svc.Services.Plugin.ListPlugins(&plugins.ListPluginsParams{
-		IDs: []int{1234, 5678},
-	})
+	plugins, err := svc.Services.Plugin.ListPlugins(&plugins.ListPluginsParams{})
 
-	fmt.Printf("err: %v+\n", apps)
+	fmt.Printf("err: %v+\n", plugins)
 
 	if err != nil {
-		fmt.Printf("err: %v+\n", apps)
+		fmt.Printf("err: %v+\n", plugins)
 	}
 
-	fmt.Printf("apps: %v+\n", apps)
+	fmt.Printf("plugins: %v+\n", plugins)
 
-	res <- apps
+	res <- plugins
 
 	g := errgroup.Group{}
 	g.SetLimit(10)

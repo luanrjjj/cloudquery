@@ -5,15 +5,16 @@ import (
 	"github.com/newrelic/cq-source-newrelic/resources/services/alerts"
 	"github.com/newrelic/cq-source-newrelic/resources/services/applications"
 	"github.com/newrelic/cq-source-newrelic/resources/services/plugins"
-	// "github.com/newrelic/cq-source-newrelic/resources/services/synthetics"
+	"github.com/newrelic/cq-source-newrelic/resources/services/synthetics"
 )
 
 func Tables() []*schema.Table {
 	return []*schema.Table{
 		alerts.Policies(),
 		alerts.Channels(),
+		alerts.Incidents(),
 		applications.Applications(),
 		plugins.Plugins(),
-		// synthetics.Synthetics(),
+		synthetics.Synthetics(),
 	}
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 	"github.com/cloudquery/plugin-sdk/v3/transformers"
 
-	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/newrelic/newrelic-client-go/v2/pkg/alerts"
 
 	"github.com/newrelic/cq-source-newrelic/client"
@@ -16,24 +15,24 @@ import (
 
 func Channels() *schema.Table {
 	return &schema.Table{
-		Name:      "new_relic_channels",
+		Name:      "new_relic_alert_channels",
 		Resolver:  getChannels,
 		Multiplex: client.AccountMultiplex,
 		Transform: transformers.TransformWithStruct(&alerts.Channel{}),
-		Columns: []schema.Column{
-			{
-				Name:       "account_name",
-				Type:       arrow.BinaryTypes.String,
-				Resolver:   client.ResolveAccountName,
-				PrimaryKey: true,
-			},
-			{
-				Name:       "id",
-				Type:       arrow.BinaryTypes.String,
-				Resolver:   schema.PathResolver("Id"),
-				PrimaryKey: true,
-			},
-		},
+		//	Columns: []schema.Column{
+		//		{
+		//			Name:       "account_name",
+		//			Type:       arrow.BinaryTypes.String,
+		//			Resolver:   client.ResolveAccountName,
+		//			PrimaryKey: true,
+		//		},
+		//		{
+		//			Name:       "id",
+		//			Type:       arrow.BinaryTypes.String,
+		//			Resolver:   schema.PathResolver("Id"),
+		//			PrimaryKey: true,
+		//		},
+		//	},
 	}
 }
 

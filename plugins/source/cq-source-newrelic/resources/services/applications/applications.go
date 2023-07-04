@@ -24,14 +24,10 @@ func Applications() *schema.Table {
 func getApplications(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- interface{}) error {
 	svc := meta.(*client.Client)
 
-	apps, err := svc.Services.APM.ListApplications(&apm.ListApplicationsParams{
-		Name: "Bewiz",
-	})
-
-	fmt.Printf("err: %v+\n", apps)
+	apps, err := svc.Services.APM.ListApplications(&apm.ListApplicationsParams{})
 
 	if err != nil {
-		fmt.Printf("err: %v+\n", apps)
+		fmt.Printf("err: %v+\n", err)
 	}
 
 	fmt.Printf("apps: %v+\n", apps)
