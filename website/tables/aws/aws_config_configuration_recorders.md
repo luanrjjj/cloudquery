@@ -10,8 +10,6 @@ The primary key for this table is **arn**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -27,3 +25,29 @@ The primary key for this table is **arn**.
 |status_last_status_change_time|`timestamp[us, tz=UTC]`|
 |status_last_stop_time|`timestamp[us, tz=UTC]`|
 |status_recording|`bool`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### AWS Config should be enabled
+
+```sql
+SELECT
+  'AWS Config should be enabled' AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN (recording_group->>'IncludeGlobalResourceTypes')::BOOL IS NOT true
+  OR (recording_group->>'AllSupported')::BOOL IS NOT true
+  OR status_recording IS NOT true
+  OR status_last_status IS DISTINCT FROM 'SUCCESS'
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_config_configuration_recorders;
+```
+
+

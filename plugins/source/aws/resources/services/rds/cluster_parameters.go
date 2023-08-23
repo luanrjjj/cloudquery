@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func clusterParameters() *schema.Table {
@@ -20,7 +20,6 @@ func clusterParameters() *schema.Table {
 		Description: "https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_Parameter.html",
 		Resolver:    fetchRdsClusterParameters,
 		Transform:   transformers.TransformWithStruct(&types.Parameter{}),
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "rds"),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
 			client.DefaultRegionColumn(false),
@@ -84,8 +83,8 @@ func clusterParameters() *schema.Table {
 }
 
 func fetchRdsClusterParameters(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Rds
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceRds).Rds
 
 	parentEngineVersion := parent.Item.(types.DBEngineVersion)
 
@@ -98,7 +97,7 @@ func fetchRdsClusterParameters(ctx context.Context, meta schema.ClientMeta, pare
 	}
 
 	output, err := svc.DescribeEngineDefaultClusterParameters(ctx, input, func(options *rds.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

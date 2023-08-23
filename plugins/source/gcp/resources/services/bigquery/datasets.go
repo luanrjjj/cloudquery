@@ -2,11 +2,16 @@ package bigquery
 
 import (
 	"github.com/apache/arrow/go/v13/arrow"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/cloudquery/plugins/source/gcp/client"
 	pb "google.golang.org/api/bigquery/v2"
 )
+
+type datasetWrapper struct {
+	*pb.Dataset
+	svc *pb.Service
+}
 
 func Datasets() *schema.Table {
 	return &schema.Table{
@@ -15,7 +20,7 @@ func Datasets() *schema.Table {
 		PreResourceResolver: datasetGet,
 		Resolver:            fetchDatasets,
 		Multiplex:           client.ProjectMultiplexEnabledServices("bigquery.googleapis.com"),
-		Transform:           client.TransformWithStruct(&pb.Dataset{}, transformers.WithPrimaryKeys("Id")),
+		Transform:           client.TransformWithStruct(&datasetWrapper{}, transformers.WithPrimaryKeys("Id"), transformers.WithUnwrapStructFields("Dataset")),
 		Columns: []schema.Column{
 			{
 				Name:       "project_id",

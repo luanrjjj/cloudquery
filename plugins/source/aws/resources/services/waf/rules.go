@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/waf"
 	"github.com/aws/aws-sdk-go-v2/service/waf/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Rules() *schema.Table {
@@ -43,7 +43,7 @@ func Rules() *schema.Table {
 
 func fetchWafRules(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	cl := meta.(*client.Client)
-	service := cl.Services().Waf
+	service := cl.Services(client.AWSServiceWaf).Waf
 	config := waf.ListRulesInput{}
 	for {
 		output, err := service.ListRules(ctx, &config, func(o *waf.Options) {
@@ -87,7 +87,7 @@ func resolveWafRuleTags(ctx context.Context, meta schema.ClientMeta, resource *s
 
 	// Resolve tags for resource
 	cl := meta.(*client.Client)
-	service := cl.Services().Waf
+	service := cl.Services(client.AWSServiceWaf).Waf
 
 	// Generate arn
 	arnStr := arn.ARN{

@@ -3,14 +3,14 @@ package docdb
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/docdb"
 	"github.com/aws/aws-sdk-go-v2/service/docdb/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func SubnetGroups() *schema.Table {
@@ -40,15 +40,15 @@ func SubnetGroups() *schema.Table {
 }
 
 func fetchDocdbSubnetGroups(ctx context.Context, meta schema.ClientMeta, _ *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Docdb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDocdb).Docdb
 
 	input := &docdb.DescribeDBSubnetGroupsInput{}
 
 	p := docdb.NewDescribeDBSubnetGroupsPaginator(svc, input)
 	for p.HasMorePages() {
 		response, err := p.NextPage(ctx, func(options *docdb.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

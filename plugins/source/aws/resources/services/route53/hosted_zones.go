@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/resources/services/route53/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func HostedZones() *schema.Table {
@@ -48,8 +48,8 @@ func HostedZones() *schema.Table {
 
 func fetchRoute53HostedZones(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	var config route53.ListHostedZonesInput
-	c := meta.(*client.Client)
-	svc := c.Services().Route53
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceRoute53).Route53
 
 	processHostedZonesBundle := func(hostedZones []types.HostedZone) error {
 		tagsCfg := &route53.ListTagsForResourcesInput{ResourceType: types.TagResourceTypeHostedzone, ResourceIds: make([]string, 0, len(hostedZones))}
@@ -59,14 +59,14 @@ func fetchRoute53HostedZones(ctx context.Context, meta schema.ClientMeta, parent
 			tagsCfg.ResourceIds = append(tagsCfg.ResourceIds, parsedId)
 		}
 		tagsResponse, err := svc.ListTagsForResources(ctx, tagsCfg, func(options *route53.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
 		}
 		for _, h := range hostedZones {
 			gotHostedZone, err := svc.GetHostedZone(ctx, &route53.GetHostedZoneInput{Id: h.Id}, func(options *route53.Options) {
-				options.Region = c.Region
+				options.Region = cl.Region
 			})
 			if err != nil {
 				return err
@@ -79,6 +79,7 @@ func fetchRoute53HostedZones(ctx context.Context, meta schema.ClientMeta, parent
 				HostedZone:      h,
 				Tags:            client.TagsToMap(getTags(*h.Id, tagsResponse.ResourceTagSets)),
 				DelegationSetId: delegationSetId,
+				DelegationSet:   gotHostedZone.DelegationSet,
 				VPCs:            gotHostedZone.VPCs,
 			}
 		}
@@ -87,7 +88,7 @@ func fetchRoute53HostedZones(ctx context.Context, meta schema.ClientMeta, parent
 	paginator := route53.NewListHostedZonesPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *route53.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

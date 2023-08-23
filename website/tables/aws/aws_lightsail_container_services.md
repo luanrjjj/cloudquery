@@ -16,8 +16,6 @@ The following tables depend on aws_lightsail_container_services:
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -41,3 +39,32 @@ The following tables depend on aws_lightsail_container_services:
 |state|`utf8`|
 |state_detail|`json`|
 |url|`utf8`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Unused Lightsail container services
+
+```sql
+WITH
+  deployment
+    AS (
+      SELECT
+        DISTINCT container_service_arn
+      FROM
+        aws_lightsail_container_service_deployments
+    )
+SELECT
+  'Unused Lightsail container services' AS title,
+  cs.account_id,
+  cs.arn AS resource_id,
+  'fail' AS status
+FROM
+  aws_lightsail_container_services AS cs
+  LEFT JOIN deployment ON deployment.container_service_arn = cs.arn
+WHERE
+  deployment.container_service_arn IS NULL;
+```
+
+

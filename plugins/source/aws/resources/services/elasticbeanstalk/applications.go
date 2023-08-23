@@ -3,14 +3,14 @@ package elasticbeanstalk
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk"
 	"github.com/aws/aws-sdk-go-v2/service/elasticbeanstalk/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Applications() *schema.Table {
@@ -46,10 +46,10 @@ func Applications() *schema.Table {
 
 func fetchElasticbeanstalkApplications(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	var config elasticbeanstalk.DescribeApplicationsInput
-	c := meta.(*client.Client)
-	svc := c.Services().Elasticbeanstalk
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceElasticbeanstalk).Elasticbeanstalk
 	output, err := svc.DescribeApplications(ctx, &config, func(options *elasticbeanstalk.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err
@@ -61,7 +61,7 @@ func fetchElasticbeanstalkApplications(ctx context.Context, meta schema.ClientMe
 func resolveElasticbeanstalkApplicationTags(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	p := resource.Item.(types.ApplicationDescription)
 	cl := meta.(*client.Client)
-	svc := cl.Services().Elasticbeanstalk
+	svc := cl.Services(client.AWSServiceElasticbeanstalk).Elasticbeanstalk
 	tagsOutput, err := svc.ListTagsForResource(ctx, &elasticbeanstalk.ListTagsForResourceInput{
 		ResourceArn: p.ApplicationArn,
 	}, func(o *elasticbeanstalk.Options) {

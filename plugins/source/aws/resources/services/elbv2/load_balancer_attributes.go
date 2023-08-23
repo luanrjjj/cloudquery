@@ -7,8 +7,8 @@ import (
 	elbv2 "github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2"
 	"github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func loadBalancerAttributes() *schema.Table {
@@ -17,7 +17,6 @@ func loadBalancerAttributes() *schema.Table {
 		Name:        tableName,
 		Description: `https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_LoadBalancerAttribute.html`,
 		Resolver:    fetchLoadBalancerAttributes,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "elasticloadbalancing"),
 		Transform:   transformers.TransformWithStruct(&types.LoadBalancerAttribute{}),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
@@ -33,10 +32,10 @@ func loadBalancerAttributes() *schema.Table {
 
 func fetchLoadBalancerAttributes(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	lb := parent.Item.(types.LoadBalancer)
-	c := meta.(*client.Client)
-	svc := c.Services().Elasticloadbalancingv2
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceElasticloadbalancingv2).Elasticloadbalancingv2
 	result, err := svc.DescribeLoadBalancerAttributes(ctx, &elbv2.DescribeLoadBalancerAttributesInput{LoadBalancerArn: lb.LoadBalancerArn}, func(options *elbv2.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

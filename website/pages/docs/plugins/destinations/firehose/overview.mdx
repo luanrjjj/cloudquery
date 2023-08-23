@@ -1,3 +1,9 @@
+---
+name: Amazon Kinesis Firehose
+title: Amazon Kinesis Firehose Destination Plugin
+description: CloudQuery Amazon Kinesis Firehose destination plugin documentation
+---
+
 # Amazon Kinesis Firehose Destination Plugin
 
 import { getLatestVersion } from "../../../../../utils/versions";
@@ -27,7 +33,22 @@ It is important to note that Amazon Kinesis Firehose has the following limitatio
 
 ## Firehose Spec
 
-- `stream_arn` (string) (required)
+- `stream_arn` (`string`) (required)
 
   Kinesis Firehose delivery stream where data will be sent.
 
+- `max_retries` (`integer`) (optional) (default: `5`)
+
+  Amount of retries to perform when writing a batch.
+
+- `max_record_size_bytes` (`integer`) (optional) (default: `1024000` (1000 KiB))
+
+  Number of bytes (as Arrow buffer size) to write before starting a new record.
+
+- `max_batch_records` (`integer`) (optional) (default: `500` (1000 KiB))
+
+  Number of records allowed in a single batch.
+
+- `max_batch_size_bytes` (`integer`) (optional) (default: `4194000` (~4000 KiB))
+
+  Number of bytes allowed in a single batch.

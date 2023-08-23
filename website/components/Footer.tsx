@@ -28,8 +28,8 @@ function FooterHeader({ children }: { children: ReactNode }) {
 const navigation = {
   general: [
     { name: "Documentation", href: "/docs" },
-    { name: "CLI reference", href: "/docs/reference/cli/cloudquery" },
     { name: "Blog", href: "/blog" },
+    { name: "Case Studies", href: "/case-studies" },
     {
       name: "Releases",
       href: "https://github.com/cloudquery/cloudquery/releases",
@@ -37,6 +37,10 @@ const navigation = {
     { name: "FAQ", href: "/docs/faq" },
   ],
   support: [
+    {
+      name: "Support Plans",
+      href: "/pricing",
+    },
     {
       name: "GitHub",
       href: "https://github.com/cloudquery/cloudquery",
@@ -50,7 +54,7 @@ const navigation = {
     { name: "GitHub", href: "https://github.com/cloudquery/cloudquery" },
     { name: "Twitter", href: "https://twitter.com/cloudqueryio" },
     { name: "Brand Logo", href: "/logo" },
-    { name: "Careers", href: "https://cloudquery.notion.site/Job-Board-76c28ed942054d72993a29fa0ff52a98"}
+    { name: "Careers", href: "/docs/careers/overview"}
   ],
   legal: [
     { name: "Privacy Policy", href: "/privacy" },

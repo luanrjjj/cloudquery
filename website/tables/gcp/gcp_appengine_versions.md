@@ -17,13 +17,12 @@ The following tables depend on gcp_appengine_versions:
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
 |name (PK)|`utf8`|
 |id|`utf8`|
+|scaling|`json`|
 |inbound_services|`list<item: int64, nullable>`|
 |instance_class|`utf8`|
 |network|`json`|

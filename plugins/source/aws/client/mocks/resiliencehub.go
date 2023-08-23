@@ -95,6 +95,96 @@ func (mr *MockResiliencehubClientMockRecorder) DescribeAppAssessment(arg0, arg1 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAppAssessment", reflect.TypeOf((*MockResiliencehubClient)(nil).DescribeAppAssessment), varargs...)
 }
 
+// DescribeAppVersion mocks base method.
+func (m *MockResiliencehubClient) DescribeAppVersion(arg0 context.Context, arg1 *resiliencehub.DescribeAppVersionInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.DescribeAppVersionOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &resiliencehub.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to DescribeAppVersion")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribeAppVersion", varargs...)
+	ret0, _ := ret[0].(*resiliencehub.DescribeAppVersionOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeAppVersion indicates an expected call of DescribeAppVersion.
+func (mr *MockResiliencehubClientMockRecorder) DescribeAppVersion(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAppVersion", reflect.TypeOf((*MockResiliencehubClient)(nil).DescribeAppVersion), varargs...)
+}
+
+// DescribeAppVersionAppComponent mocks base method.
+func (m *MockResiliencehubClient) DescribeAppVersionAppComponent(arg0 context.Context, arg1 *resiliencehub.DescribeAppVersionAppComponentInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.DescribeAppVersionAppComponentOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &resiliencehub.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to DescribeAppVersionAppComponent")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribeAppVersionAppComponent", varargs...)
+	ret0, _ := ret[0].(*resiliencehub.DescribeAppVersionAppComponentOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeAppVersionAppComponent indicates an expected call of DescribeAppVersionAppComponent.
+func (mr *MockResiliencehubClientMockRecorder) DescribeAppVersionAppComponent(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAppVersionAppComponent", reflect.TypeOf((*MockResiliencehubClient)(nil).DescribeAppVersionAppComponent), varargs...)
+}
+
+// DescribeAppVersionResource mocks base method.
+func (m *MockResiliencehubClient) DescribeAppVersionResource(arg0 context.Context, arg1 *resiliencehub.DescribeAppVersionResourceInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.DescribeAppVersionResourceOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &resiliencehub.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to DescribeAppVersionResource")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribeAppVersionResource", varargs...)
+	ret0, _ := ret[0].(*resiliencehub.DescribeAppVersionResourceOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeAppVersionResource indicates an expected call of DescribeAppVersionResource.
+func (mr *MockResiliencehubClientMockRecorder) DescribeAppVersionResource(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeAppVersionResource", reflect.TypeOf((*MockResiliencehubClient)(nil).DescribeAppVersionResource), varargs...)
+}
+
 // DescribeAppVersionResourcesResolutionStatus mocks base method.
 func (m *MockResiliencehubClient) DescribeAppVersionResourcesResolutionStatus(arg0 context.Context, arg1 *resiliencehub.DescribeAppVersionResourcesResolutionStatusInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.DescribeAppVersionResourcesResolutionStatusOutput, error) {
 
@@ -245,6 +335,36 @@ func (mr *MockResiliencehubClientMockRecorder) ListAlarmRecommendations(arg0, ar
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAlarmRecommendations", reflect.TypeOf((*MockResiliencehubClient)(nil).ListAlarmRecommendations), varargs...)
 }
 
+// ListAppAssessmentComplianceDrifts mocks base method.
+func (m *MockResiliencehubClient) ListAppAssessmentComplianceDrifts(arg0 context.Context, arg1 *resiliencehub.ListAppAssessmentComplianceDriftsInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.ListAppAssessmentComplianceDriftsOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &resiliencehub.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to ListAppAssessmentComplianceDrifts")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListAppAssessmentComplianceDrifts", varargs...)
+	ret0, _ := ret[0].(*resiliencehub.ListAppAssessmentComplianceDriftsOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListAppAssessmentComplianceDrifts indicates an expected call of ListAppAssessmentComplianceDrifts.
+func (mr *MockResiliencehubClientMockRecorder) ListAppAssessmentComplianceDrifts(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAppAssessmentComplianceDrifts", reflect.TypeOf((*MockResiliencehubClient)(nil).ListAppAssessmentComplianceDrifts), varargs...)
+}
+
 // ListAppAssessments mocks base method.
 func (m *MockResiliencehubClient) ListAppAssessments(arg0 context.Context, arg1 *resiliencehub.ListAppAssessmentsInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.ListAppAssessmentsOutput, error) {
 
@@ -333,6 +453,66 @@ func (mr *MockResiliencehubClientMockRecorder) ListAppComponentRecommendations(a
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAppComponentRecommendations", reflect.TypeOf((*MockResiliencehubClient)(nil).ListAppComponentRecommendations), varargs...)
+}
+
+// ListAppInputSources mocks base method.
+func (m *MockResiliencehubClient) ListAppInputSources(arg0 context.Context, arg1 *resiliencehub.ListAppInputSourcesInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.ListAppInputSourcesOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &resiliencehub.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to ListAppInputSources")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListAppInputSources", varargs...)
+	ret0, _ := ret[0].(*resiliencehub.ListAppInputSourcesOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListAppInputSources indicates an expected call of ListAppInputSources.
+func (mr *MockResiliencehubClientMockRecorder) ListAppInputSources(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAppInputSources", reflect.TypeOf((*MockResiliencehubClient)(nil).ListAppInputSources), varargs...)
+}
+
+// ListAppVersionAppComponents mocks base method.
+func (m *MockResiliencehubClient) ListAppVersionAppComponents(arg0 context.Context, arg1 *resiliencehub.ListAppVersionAppComponentsInput, arg2 ...func(*resiliencehub.Options)) (*resiliencehub.ListAppVersionAppComponentsOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &resiliencehub.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to ListAppVersionAppComponents")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListAppVersionAppComponents", varargs...)
+	ret0, _ := ret[0].(*resiliencehub.ListAppVersionAppComponentsOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListAppVersionAppComponents indicates an expected call of ListAppVersionAppComponents.
+func (mr *MockResiliencehubClientMockRecorder) ListAppVersionAppComponents(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListAppVersionAppComponents", reflect.TypeOf((*MockResiliencehubClient)(nil).ListAppVersionAppComponents), varargs...)
 }
 
 // ListAppVersionResourceMappings mocks base method.

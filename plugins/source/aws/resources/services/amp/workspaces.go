@@ -3,15 +3,15 @@ package amp
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/amp"
 	"github.com/aws/aws-sdk-go-v2/service/amp/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Workspaces() *schema.Table {
@@ -50,13 +50,13 @@ func Workspaces() *schema.Table {
 }
 
 func fetchAmpWorkspaces(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := meta.(*client.Client).Services().Amp
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAmp).Amp
 
 	p := amp.NewListWorkspacesPaginator(svc, &amp.ListWorkspacesInput{MaxResults: aws.Int32(int32(1000))})
 	for p.HasMorePages() {
 		out, err := p.NextPage(ctx, func(options *amp.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -69,13 +69,13 @@ func fetchAmpWorkspaces(ctx context.Context, meta schema.ClientMeta, parent *sch
 }
 
 func describeWorkspace(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := meta.(*client.Client).Services().Amp
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAmp).Amp
 
 	out, err := svc.DescribeWorkspace(ctx,
 		&amp.DescribeWorkspaceInput{WorkspaceId: resource.Item.(types.WorkspaceSummary).WorkspaceId},
 		func(options *amp.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		},
 	)
 	if err != nil {
@@ -88,13 +88,13 @@ func describeWorkspace(ctx context.Context, meta schema.ClientMeta, resource *sc
 }
 
 func describeAlertManagerDefinition(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, col schema.Column) error {
-	c := meta.(*client.Client)
-	svc := meta.(*client.Client).Services().Amp
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAmp).Amp
 
 	out, err := svc.DescribeAlertManagerDefinition(ctx,
 		&amp.DescribeAlertManagerDefinitionInput{WorkspaceId: resource.Item.(*types.WorkspaceDescription).WorkspaceId},
 		func(options *amp.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		},
 	)
 	if err != nil {
@@ -105,13 +105,13 @@ func describeAlertManagerDefinition(ctx context.Context, meta schema.ClientMeta,
 }
 
 func describeLoggingConfiguration(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, col schema.Column) error {
-	c := meta.(*client.Client)
-	svc := meta.(*client.Client).Services().Amp
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAmp).Amp
 
 	out, err := svc.DescribeLoggingConfiguration(ctx,
 		&amp.DescribeLoggingConfigurationInput{WorkspaceId: resource.Item.(*types.WorkspaceDescription).WorkspaceId},
 		func(options *amp.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		},
 	)
 	if err != nil {

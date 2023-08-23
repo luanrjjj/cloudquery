@@ -3,15 +3,15 @@ package cloudwatchlogs
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs"
 	"github.com/aws/aws-sdk-go-v2/service/cloudwatchlogs/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func ResourcePolicies() *schema.Table {
@@ -42,12 +42,12 @@ func ResourcePolicies() *schema.Table {
 
 func fetchCloudwatchlogsResourcePolicies(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	var config cloudwatchlogs.DescribeResourcePoliciesInput
-	c := meta.(*client.Client)
-	svc := c.Services().Cloudwatchlogs
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceCloudwatchlogs).Cloudwatchlogs
 	// No paginator available
 	for {
 		response, err := svc.DescribeResourcePolicies(ctx, &config, func(options *cloudwatchlogs.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

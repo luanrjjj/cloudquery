@@ -10,8 +10,6 @@ The primary key for this table is **self_link**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id|`utf8`|
@@ -39,3 +37,24 @@ The primary key for this table is **self_link**.
 |self_link (PK)|`utf8`|
 |stack_type|`utf8`|
 |state|`utf8`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Ensure that VPC Flow Logs is enabled for every subnet in a VPC Network (Automated)
+
+```sql
+SELECT
+  DISTINCT
+  gcn.name AS resource_id,
+  'Ensure that VPC Flow Logs is enabled for every subnet in a VPC Network (Automated)'
+    AS title,
+  gcn.project_id AS project_id,
+  CASE WHEN gcs.enable_flow_logs = false THEN 'fail' ELSE 'pass' END AS status
+FROM
+  gcp_compute_networks AS gcn
+  JOIN gcp_compute_subnetworks AS gcs ON gcn.self_link = gcs.network;
+```
+
+

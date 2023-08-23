@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/servicequotas"
 	"github.com/aws/aws-sdk-go-v2/service/servicequotas/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Services() *schema.Table {
@@ -49,7 +49,7 @@ func fetchServicequotasServices(ctx context.Context, meta schema.ClientMeta, par
 	}
 
 	cl := meta.(*client.Client)
-	svc := cl.Services().Servicequotas
+	svc := cl.Services(client.AWSServiceServicequotas).Servicequotas
 	servicePaginator := servicequotas.NewListServicesPaginator(svc, &config)
 	for servicePaginator.HasMorePages() {
 		output, err := servicePaginator.NextPage(ctx, func(o *servicequotas.Options) {

@@ -10,8 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/apigateway"
 	"github.com/aws/aws-sdk-go-v2/service/apigateway/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func domainNameBasePathMappings() *schema.Table {
@@ -20,7 +20,6 @@ func domainNameBasePathMappings() *schema.Table {
 		Name:        tableName,
 		Description: `https://docs.aws.amazon.com/apigateway/latest/api/API_BasePathMapping.html`,
 		Resolver:    fetchApigatewayDomainNameBasePathMappings,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "apigateway"),
 		Transform:   transformers.TransformWithStruct(&types.BasePathMapping{}),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(true),
@@ -42,12 +41,12 @@ func domainNameBasePathMappings() *schema.Table {
 
 func fetchApigatewayDomainNameBasePathMappings(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	r := parent.Item.(types.DomainName)
-	c := meta.(*client.Client)
-	svc := c.Services().Apigateway
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceApigateway).Apigateway
 	config := apigateway.GetBasePathMappingsInput{DomainName: r.DomainName, Limit: aws.Int32(500)}
 	for p := apigateway.NewGetBasePathMappingsPaginator(svc, &config); p.HasMorePages(); {
 		response, err := p.NextPage(ctx, func(options *apigateway.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

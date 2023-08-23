@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/iot"
 	"github.com/aws/aws-sdk-go-v2/service/iot/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Streams() *schema.Table {
@@ -35,14 +35,14 @@ func Streams() *schema.Table {
 }
 
 func fetchIotStreams(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Iot
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceIot).Iot
 	paginator := iot.NewListStreamsPaginator(svc, &iot.ListStreamsInput{
 		MaxResults: aws.Int32(250),
 	})
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *iot.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -54,7 +54,7 @@ func fetchIotStreams(ctx context.Context, meta schema.ClientMeta, parent *schema
 
 func getStream(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Iot
+	svc := cl.Services(client.AWSServiceIot).Iot
 
 	output, err := svc.DescribeStream(ctx, &iot.DescribeStreamInput{
 		StreamId: resource.Item.(types.StreamSummary).StreamId,

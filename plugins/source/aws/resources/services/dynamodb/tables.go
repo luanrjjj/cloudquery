@@ -3,15 +3,15 @@ package dynamodb
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Tables() *schema.Table {
@@ -51,14 +51,14 @@ func Tables() *schema.Table {
 }
 
 func fetchDynamodbTables(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Dynamodb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	config := dynamodb.ListTablesInput{}
 	// No paginator available
 	for {
 		output, err := svc.ListTables(ctx, &config, func(options *dynamodb.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -75,13 +75,13 @@ func fetchDynamodbTables(ctx context.Context, meta schema.ClientMeta, parent *sc
 }
 
 func getTable(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Dynamodb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	tableName := resource.Item.(string)
 
 	response, err := svc.DescribeTable(ctx, &dynamodb.DescribeTableInput{TableName: &tableName}, func(options *dynamodb.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err
@@ -95,7 +95,7 @@ func resolveDynamodbTableTags(ctx context.Context, meta schema.ClientMeta, resou
 	table := resource.Item.(*types.TableDescription)
 
 	cl := meta.(*client.Client)
-	svc := cl.Services().Dynamodb
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 	var tags []types.Tag
 	input := &dynamodb.ListTagsOfResourceInput{
 		ResourceArn: table.TableArn,
@@ -128,16 +128,16 @@ func fetchDynamodbTableReplicaAutoScalings(ctx context.Context, meta schema.Clie
 		return nil
 	}
 
-	c := meta.(*client.Client)
-	svc := c.Services().Dynamodb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	output, err := svc.DescribeTableReplicaAutoScaling(ctx, &dynamodb.DescribeTableReplicaAutoScalingInput{
 		TableName: par.TableName,
 	}, func(options *dynamodb.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
-		if c.IsNotFoundError(err) {
+		if cl.IsNotFoundError(err) {
 			return nil
 		}
 		return err
@@ -151,16 +151,16 @@ func fetchDynamodbTableReplicaAutoScalings(ctx context.Context, meta schema.Clie
 func fetchDynamodbTableContinuousBackups(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	par := parent.Item.(*types.TableDescription)
 
-	c := meta.(*client.Client)
-	svc := c.Services().Dynamodb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	output, err := svc.DescribeContinuousBackups(ctx, &dynamodb.DescribeContinuousBackupsInput{
 		TableName: par.TableName,
 	}, func(options *dynamodb.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
-		if c.IsNotFoundError(err) {
+		if cl.IsNotFoundError(err) {
 			return nil
 		}
 		return err

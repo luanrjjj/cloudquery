@@ -9,14 +9,13 @@ The composite primary key for this table is (**account_id**, **region**, **arn**
 ## Relations
 
 The following tables depend on aws_ec2_images:
+  - [aws_ec2_image_last_launched_times](aws_ec2_image_last_launched_times)
   - [aws_ec2_image_launch_permissions](aws_ec2_image_launch_permissions)
 
 ## Columns
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id (PK)|`utf8`|
@@ -52,3 +51,39 @@ The following tables depend on aws_ec2_images:
 |tpm_support|`utf8`|
 |usage_operation|`utf8`|
 |virtualization_type|`utf8`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### AMIs should require IMDSv2
+
+```sql
+SELECT
+  'AMIs should require IMDSv2' AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN imds_support IS DISTINCT FROM 'v2.0' THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_ec2_images;
+```
+
+### Unused own EC2 image
+
+```sql
+SELECT
+  'Unused own EC2 image' AS title,
+  account_id,
+  arn AS resource_id,
+  'fail' AS status
+FROM
+  aws_ec2_images
+WHERE
+  COALESCE(jsonb_array_length(block_device_mappings), 0) = 0;
+```
+
+

@@ -3,14 +3,14 @@ package qldb
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/qldb"
 	"github.com/aws/aws-sdk-go-v2/service/qldb/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Ledgers() *schema.Table {
@@ -46,13 +46,13 @@ func Ledgers() *schema.Table {
 }
 
 func fetchQldbLedgers(ctx context.Context, meta schema.ClientMeta, _ *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Qldb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceQldb).Qldb
 	config := qldb.ListLedgersInput{}
 	paginator := qldb.NewListLedgersPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *qldb.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -63,12 +63,12 @@ func fetchQldbLedgers(ctx context.Context, meta schema.ClientMeta, _ *schema.Res
 }
 
 func getLedger(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Qldb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceQldb).Qldb
 	l := resource.Item.(types.LedgerSummary)
 
 	response, err := svc.DescribeLedger(ctx, &qldb.DescribeLedgerInput{Name: l.Name}, func(options *qldb.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err
@@ -81,7 +81,7 @@ func resolveQldbLedgerTags(ctx context.Context, meta schema.ClientMeta, resource
 	ledger := resource.Item.(*qldb.DescribeLedgerOutput)
 
 	cl := meta.(*client.Client)
-	svc := cl.Services().Qldb
+	svc := cl.Services(client.AWSServiceQldb).Qldb
 	response, err := svc.ListTagsForResource(ctx, &qldb.ListTagsForResourceInput{
 		ResourceArn: ledger.Arn,
 	}, func(options *qldb.Options) {

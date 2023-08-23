@@ -8,17 +8,18 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute/v4"
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/cloudquery/cloudquery/plugins/source/azure/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/mitchellh/hashstructure/v2"
 )
 
 func SKUs() *schema.Table {
 	return &schema.Table{
-		Name:        "azure_compute_skus",
-		Resolver:    fetchResourceSKUs,
-		Description: "https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list?tabs=HTTP#resourceskusresult",
-		Multiplex:   client.SubscriptionMultiplexRegisteredNamespace("azure_compute_skus", client.Namespacemicrosoft_compute),
+		Name:                 "azure_compute_skus",
+		Resolver:             fetchResourceSKUs,
+		PostResourceResolver: client.LowercaseIDResolver,
+		Description:          "https://learn.microsoft.com/en-us/rest/api/compute/resource-skus/list?tabs=HTTP#resourceskusresult",
+		Multiplex:            client.SubscriptionMultiplexRegisteredNamespace("azure_compute_skus", client.Namespacemicrosoft_compute),
 		Transform: transformers.TransformWithStruct(&armcompute.ResourceSKU{},
 			transformers.WithPrimaryKeys("Name"),
 		),

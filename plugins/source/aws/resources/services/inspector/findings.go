@@ -3,15 +3,15 @@ package inspector
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/inspector"
 	"github.com/aws/aws-sdk-go-v2/service/inspector/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Findings() *schema.Table {
@@ -45,13 +45,13 @@ func Findings() *schema.Table {
 }
 
 func fetchInspectorFindings(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Inspector
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceInspector).Inspector
 	input := inspector.ListFindingsInput{MaxResults: aws.Int32(50)}
 	paginator := inspector.NewListFindingsPaginator(svc, &input)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *inspector.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -67,10 +67,10 @@ func fetchInspectorFindings(ctx context.Context, meta schema.ClientMeta, parent 
 				j = len(page.FindingArns) - 1
 			}
 			out, err := svc.DescribeFindings(ctx, &inspector.DescribeFindingsInput{FindingArns: page.FindingArns[i:j]}, func(options *inspector.Options) {
-				options.Region = c.Region
+				options.Region = cl.Region
 			})
 			if err != nil {
-				if c.IsNotFoundError(err) {
+				if cl.IsNotFoundError(err) {
 					continue
 				}
 				return err

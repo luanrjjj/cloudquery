@@ -14,8 +14,6 @@ This table depends on [gcp_certificatemanager_certificate_maps](gcp_certificatem
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -24,5 +22,6 @@ This table depends on [gcp_certificatemanager_certificate_maps](gcp_certificatem
 |create_time|`timestamp[us, tz=UTC]`|
 |update_time|`timestamp[us, tz=UTC]`|
 |labels|`json`|
+|match|`json`|
 |certificates|`list<item: utf8, nullable>`|
 |state|`utf8`|

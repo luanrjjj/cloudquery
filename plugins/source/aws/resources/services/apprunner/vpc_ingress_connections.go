@@ -3,14 +3,14 @@ package apprunner
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/apprunner"
 	"github.com/aws/aws-sdk-go-v2/service/apprunner/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func VpcIngressConnections() *schema.Table {
@@ -50,12 +50,12 @@ Notes:
 
 func fetchApprunnerVpcIngressConnections(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	var config apprunner.ListVpcIngressConnectionsInput
-	c := meta.(*client.Client)
-	svc := c.Services().Apprunner
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceApprunner).Apprunner
 	paginator := apprunner.NewListVpcIngressConnectionsPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		output, err := paginator.NextPage(ctx, func(options *apprunner.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -66,12 +66,12 @@ func fetchApprunnerVpcIngressConnections(ctx context.Context, meta schema.Client
 }
 
 func getVpcIngressConnection(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Apprunner
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceApprunner).Apprunner
 	asConfig := resource.Item.(types.VpcIngressConnectionSummary)
 
 	describeTaskDefinitionOutput, err := svc.DescribeVpcIngressConnection(ctx, &apprunner.DescribeVpcIngressConnectionInput{VpcIngressConnectionArn: asConfig.VpcIngressConnectionArn}, func(options *apprunner.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

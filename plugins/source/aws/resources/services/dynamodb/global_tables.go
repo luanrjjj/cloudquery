@@ -3,15 +3,15 @@ package dynamodb
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func GlobalTables() *schema.Table {
@@ -44,16 +44,16 @@ This table only contains version 2017.11.29 (Legacy) Global Tables. See aws_dyna
 }
 
 func fetchGlobalTables(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Dynamodb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	config := dynamodb.ListGlobalTablesInput{
-		RegionName: aws.String(c.Region),
+		RegionName: aws.String(cl.Region),
 	}
 	// No paginator available
 	for {
 		output, err := svc.ListGlobalTables(ctx, &config, func(options *dynamodb.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -71,7 +71,7 @@ func fetchGlobalTables(ctx context.Context, meta schema.ClientMeta, parent *sche
 
 func getGlobalTable(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Dynamodb
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	table := resource.Item.(types.GlobalTable)
 
@@ -90,7 +90,7 @@ func resolveDynamodbGlobalTableTags(ctx context.Context, meta schema.ClientMeta,
 	table := resource.Item.(*types.GlobalTableDescription)
 
 	cl := meta.(*client.Client)
-	svc := cl.Services().Dynamodb
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 	var tags []types.Tag
 	input := &dynamodb.ListTagsOfResourceInput{
 		ResourceArn: table.GlobalTableArn,

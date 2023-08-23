@@ -3,15 +3,15 @@ package neptune
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/neptune"
 	"github.com/aws/aws-sdk-go-v2/service/neptune/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func SubnetGroups() *schema.Table {
@@ -70,12 +70,12 @@ func fetchNeptuneSubnetGroups(ctx context.Context, meta schema.ClientMeta, paren
 		Filters: []types.Filter{{Name: aws.String("engine"), Values: []string{"neptune"}}},
 	}
 
-	c := meta.(*client.Client)
-	svc := c.Services().Neptune
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceNeptune).Neptune
 	paginator := neptune.NewDescribeDBSubnetGroupsPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *neptune.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -88,7 +88,7 @@ func fetchNeptuneSubnetGroups(ctx context.Context, meta schema.ClientMeta, paren
 func resolveNeptuneSubnetGroupTags(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	s := resource.Item.(types.DBSubnetGroup)
 	cl := meta.(*client.Client)
-	svc := cl.Services().Neptune
+	svc := cl.Services(client.AWSServiceNeptune).Neptune
 	out, err := svc.ListTagsForResource(ctx, &neptune.ListTagsForResourceInput{ResourceName: s.DBSubnetGroupArn}, func(options *neptune.Options) {
 		options.Region = cl.Region
 	})

@@ -10,8 +10,6 @@ The composite primary key for this table is (**project_id**, **name**).
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -24,5 +22,7 @@ The composite primary key for this table is (**project_id**, **name**).
 |require_approval|`bool`|
 |create_time|`timestamp[us, tz=UTC]`|
 |update_time|`timestamp[us, tz=UTC]`|
+|deployment_target|`json`|
 |etag|`utf8`|
 |execution_configs|`json`|
+|deploy_parameters|`json`|

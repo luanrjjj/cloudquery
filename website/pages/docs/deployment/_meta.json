@@ -5,5 +5,7 @@
   "docker": "Docker",
   "github-actions": "GitHub Actions",
   "cloud-run": "Google Cloud Run",
+  "google-cloud-vm": "Google Cloud VM",
+  "kubernetes": "Kubernetes CronJob",
   "kestra": "Kestra"
 }

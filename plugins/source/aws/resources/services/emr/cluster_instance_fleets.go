@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/emr"
 	"github.com/aws/aws-sdk-go-v2/service/emr/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func clusterInstanceFleets() *schema.Table {
@@ -17,7 +17,6 @@ func clusterInstanceFleets() *schema.Table {
 		Name:        tableName,
 		Description: `https://docs.aws.amazon.com/emr/latest/APIReference/API_InstanceFleet.html`,
 		Resolver:    fetchClusterInstanceFleets,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "elasticmapreduce"),
 		Transform:   transformers.TransformWithStruct(&types.InstanceFleet{}, transformers.WithPrimaryKeys("Id")),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
@@ -41,12 +40,12 @@ func fetchClusterInstanceFleets(ctx context.Context, meta schema.ClientMeta, par
 	config := emr.ListInstanceFleetsInput{
 		ClusterId: cluster.Id,
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Emr
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceEmr).Emr
 	paginator := emr.NewListInstanceFleetsPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *emr.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

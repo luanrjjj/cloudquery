@@ -10,8 +10,6 @@ The primary key for this table is **name**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id|`utf8`|
@@ -45,3 +43,8 @@ The primary key for this table is **name**.
 |read_endpoint|`utf8`|
 |read_endpoint_port|`int64`|
 |read_replicas_mode|`utf8`|
+|customer_managed_key|`utf8`|
+|persistence_config|`json`|
+|suspension_reasons|`list<item: int64, nullable>`|
+|maintenance_version|`utf8`|
+|available_maintenance_versions|`list<item: utf8, nullable>`|

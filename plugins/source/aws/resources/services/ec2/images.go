@@ -3,7 +3,7 @@ package ec2
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -11,8 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -41,14 +41,15 @@ func Images() *schema.Table {
 		},
 		Relations: []*schema.Table{
 			imageAttributesLaunchPermissions(),
+			imageAttributesLastLaunchTime(),
 		},
 	}
 }
 
 func fetchEc2Images(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
+	cl := meta.(*client.Client)
 
-	svc := c.Services().Ec2
+	svc := cl.Services(client.AWSServiceEc2).Ec2
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
 		// fetch ec2.Images owned by this account
@@ -57,7 +58,7 @@ func fetchEc2Images(ctx context.Context, meta schema.ClientMeta, parent *schema.
 		})
 		for pag.HasMorePages() {
 			resp, err := pag.NextPage(ctx, func(options *ec2.Options) {
-				options.Region = c.Region
+				options.Region = cl.Region
 			})
 			if err != nil {
 				return err
@@ -74,13 +75,13 @@ func fetchEc2Images(ctx context.Context, meta schema.ClientMeta, parent *schema.
 		})
 		for pag.HasMorePages() {
 			resp, err := pag.NextPage(ctx, func(options *ec2.Options) {
-				options.Region = c.Region
+				options.Region = cl.Region
 			})
 			if err != nil {
 				return err
 			}
 			for _, image := range resp.Images {
-				if aws.ToString(image.OwnerId) != c.AccountID {
+				if aws.ToString(image.OwnerId) != cl.AccountID {
 					res <- image
 				}
 			}

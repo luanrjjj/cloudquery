@@ -3,15 +3,15 @@ package cloudformation
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/resources/services/cloudformation/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func StackSets() *schema.Table {
@@ -46,13 +46,14 @@ func StackSets() *schema.Table {
 
 		Relations: []*schema.Table{
 			stackSetOperations(),
+			stackInstanceSummaries(),
 		},
 	}
 }
 
 func fetchCloudformationStackSets(ctx context.Context, meta schema.ClientMeta, _ *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Cloudformation
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceCloudformation).Cloudformation
 	var err error
 	var page *cloudformation.ListStackSetsOutput
 	// There is no way of determining if an account is a delegated admin or not. So just need to test it out and fail over to the other one
@@ -63,10 +64,10 @@ func fetchCloudformationStackSets(ctx context.Context, meta schema.ClientMeta, _
 		paginator := cloudformation.NewListStackSetsPaginator(svc, &config)
 		for paginator.HasMorePages() {
 			page, err = paginator.NextPage(ctx, func(options *cloudformation.Options) {
-				options.Region = c.Region
+				options.Region = cl.Region
 			})
 			if err != nil {
-				c.Logger().Info().Err(err).Msgf("failed to list stack sets with callAs: %s", string(callAs))
+				cl.Logger().Info().Err(err).Msgf("failed to list stack sets with callAs: %s", string(callAs))
 				break
 			}
 			for _, summary := range page.Summaries {
@@ -88,15 +89,15 @@ func getStackSet(ctx context.Context, meta schema.ClientMeta, resource *schema.R
 	var stackSet *cloudformation.DescribeStackSetOutput
 
 	stack := resource.Item.(models.ExpandedSummary)
-	c := meta.(*client.Client)
-
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceCloudformation).Cloudformation
 	input := &cloudformation.DescribeStackSetInput{
 		StackSetName: stack.StackSetName,
 		CallAs:       stack.CallAs,
 	}
 
-	stackSet, err = meta.(*client.Client).Services().Cloudformation.DescribeStackSet(ctx, input, func(options *cloudformation.Options) {
-		options.Region = c.Region
+	stackSet, err = svc.DescribeStackSet(ctx, input, func(options *cloudformation.Options) {
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

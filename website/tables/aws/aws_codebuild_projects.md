@@ -1,17 +1,20 @@
 # Table: aws_codebuild_projects
 
-This table shows data for Codebuild Projects.
+This table shows data for AWS CodeBuild Projects.
 
 https://docs.aws.amazon.com/codebuild/latest/APIReference/API_Project.html
 
 The primary key for this table is **arn**.
 
+## Relations
+
+The following tables depend on aws_codebuild_projects:
+  - [aws_codebuild_builds](aws_codebuild_builds)
+
 ## Columns
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -44,3 +47,53 @@ The primary key for this table is **arn**.
 |timeout_in_minutes|`int64`|
 |vpc_config|`json`|
 |webhook|`json`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### CodeBuild project environment variables should not contain clear text credentials
+
+```sql
+SELECT
+  DISTINCT
+  'CodeBuild project environment variables should not contain clear text credentials'
+    AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN e->>'Type' = 'PLAINTEXT'
+  AND (
+      upper(e->>'Name') LIKE '%ACCESS_KEY%'
+      OR upper(e->>'Name') LIKE '%SECRET%'
+      OR upper(e->>'Name') LIKE '%PASSWORD%'
+    )
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_codebuild_projects,
+  jsonb_array_elements(environment->'EnvironmentVariables') AS e;
+```
+
+### CodeBuild GitHub or Bitbucket source repository URLs should use OAuth
+
+```sql
+SELECT
+  'CodeBuild GitHub or Bitbucket source repository URLs should use OAuth'
+    AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN source->>'Type' IN ('GITHUB', 'BITBUCKET')
+  AND source->'Auth'->>'Type' != 'OAUTH'
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_codebuild_projects;
+```
+
+

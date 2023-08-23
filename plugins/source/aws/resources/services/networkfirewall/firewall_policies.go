@@ -3,15 +3,15 @@ package networkfirewall
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/networkfirewall"
 	"github.com/aws/aws-sdk-go-v2/service/networkfirewall/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/resources/services/networkfirewall/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func FirewallPolicies() *schema.Table {
@@ -46,12 +46,12 @@ func FirewallPolicies() *schema.Table {
 
 func fetchFirewallPolicies(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	var input networkfirewall.ListFirewallPoliciesInput
-	c := meta.(*client.Client)
-	svc := c.Services().Networkfirewall
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceNetworkfirewall).Networkfirewall
 	p := networkfirewall.NewListFirewallPoliciesPaginator(svc, &input)
 	for p.HasMorePages() {
 		response, err := p.NextPage(ctx, func(options *networkfirewall.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -62,16 +62,16 @@ func fetchFirewallPolicies(ctx context.Context, meta schema.ClientMeta, parent *
 }
 
 func getFirewallPolicy(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Networkfirewall
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceNetworkfirewall).Networkfirewall
 	metadata := resource.Item.(types.FirewallPolicyMetadata)
 
 	policy, err := svc.DescribeFirewallPolicy(ctx, &networkfirewall.DescribeFirewallPolicyInput{
 		FirewallPolicyArn: metadata.Arn,
 	}, func(options *networkfirewall.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
-	if err != nil && !c.IsNotFoundError(err) {
+	if err != nil && !cl.IsNotFoundError(err) {
 		return err
 	}
 

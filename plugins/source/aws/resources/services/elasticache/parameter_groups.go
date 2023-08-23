@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/elasticache"
 	"github.com/aws/aws-sdk-go-v2/service/elasticache/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func ParameterGroups() *schema.Table {
@@ -33,15 +33,15 @@ func ParameterGroups() *schema.Table {
 }
 
 func fetchElasticacheParameterGroups(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
+	cl := meta.(*client.Client)
 	awsProviderClient := meta.(*client.Client)
-	svc := awsProviderClient.Services().Elasticache
+	svc := awsProviderClient.Services(client.AWSServiceElasticache).Elasticache
 
 	var describeCacheParameterGroupsInput elasticache.DescribeCacheParameterGroupsInput
 	paginator := elasticache.NewDescribeCacheParameterGroupsPaginator(svc, &describeCacheParameterGroupsInput)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *elasticache.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

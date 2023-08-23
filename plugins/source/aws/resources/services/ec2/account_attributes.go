@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func AccountAttributes() *schema.Table {
@@ -30,9 +30,10 @@ func AccountAttributes() *schema.Table {
 	}
 }
 func fetchAccountAttributes(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	output, err := c.Services().Ec2.DescribeAccountAttributes(ctx, &ec2.DescribeAccountAttributesInput{}, func(options *ec2.Options) {
-		options.Region = c.Region
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceEc2).Ec2
+	output, err := svc.DescribeAccountAttributes(ctx, &ec2.DescribeAccountAttributesInput{}, func(options *ec2.Options) {
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

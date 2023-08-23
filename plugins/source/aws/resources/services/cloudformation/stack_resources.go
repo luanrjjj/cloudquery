@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation"
 	"github.com/aws/aws-sdk-go-v2/service/cloudformation/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func stackResources() *schema.Table {
@@ -17,7 +17,6 @@ func stackResources() *schema.Table {
 		Name:        tableName,
 		Description: `https://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_StackResourceSummary.html`,
 		Resolver:    fetchCloudformationStackResources,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "cloudformation"),
 		Transform:   transformers.TransformWithStruct(&types.StackResourceSummary{}),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
@@ -36,12 +35,12 @@ func fetchCloudformationStackResources(ctx context.Context, meta schema.ClientMe
 	config := cloudformation.ListStackResourcesInput{
 		StackName: stack.StackName,
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Cloudformation
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceCloudformation).Cloudformation
 	paginator := cloudformation.NewListStackResourcesPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *cloudformation.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

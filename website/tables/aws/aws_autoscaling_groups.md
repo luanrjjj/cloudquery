@@ -16,8 +16,6 @@ The following tables depend on aws_autoscaling_groups:
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -61,3 +59,28 @@ The following tables depend on aws_autoscaling_groups:
 |warm_pool_configuration|`json`|
 |warm_pool_size|`int64`|
 |notification_configurations|`json`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Auto Scaling groups associated with a load balancer should use health checks
+
+```sql
+SELECT
+  'Auto Scaling groups associated with a load balancer should use health checks'
+    AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN array_length(load_balancer_names, 1) > 0
+  AND health_check_type IS DISTINCT FROM 'ELB'
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_autoscaling_groups;
+```
+
+

@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/route53"
 	"github.com/aws/aws-sdk-go-v2/service/route53/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func TrafficPolicies() *schema.Table {
@@ -38,12 +38,12 @@ func TrafficPolicies() *schema.Table {
 
 func fetchRoute53TrafficPolicies(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	var config route53.ListTrafficPoliciesInput
-	c := meta.(*client.Client)
-	svc := c.Services().Route53
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceRoute53).Route53
 
 	for {
 		response, err := svc.ListTrafficPolicies(ctx, &config, func(options *route53.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -61,7 +61,7 @@ func fetchRoute53TrafficPolicyVersions(ctx context.Context, meta schema.ClientMe
 	r := parent.Item.(types.TrafficPolicySummary)
 	config := route53.ListTrafficPolicyVersionsInput{Id: r.Id}
 	cl := meta.(*client.Client)
-	svc := cl.Services().Route53
+	svc := cl.Services(client.AWSServiceRoute53).Route53
 	// no paginator available
 	for {
 		response, err := svc.ListTrafficPolicyVersions(ctx, &config, func(options *route53.Options) {

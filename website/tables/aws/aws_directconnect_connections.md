@@ -10,8 +10,6 @@ The composite primary key for this table is (**arn**, **id**).
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -39,3 +37,23 @@ The composite primary key for this table is (**arn**, **id**).
 |port_encryption_status|`utf8`|
 |provider_name|`utf8`|
 |vlan|`int64`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Direct Connect connections in "down" state
+
+```sql
+SELECT
+  'Direct Connect connections in "down" state' AS title,
+  account_id,
+  arn AS resource_id,
+  'fail' AS status
+FROM
+  aws_directconnect_connections
+WHERE
+  connection_state = 'down';
+```
+
+

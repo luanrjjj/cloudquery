@@ -10,14 +10,13 @@ The primary key for this table is **self_link**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id|`utf8`|
 |creation_timestamp|`utf8`|
 |description|`utf8`|
 |fingerprint|`utf8`|
+|http_keep_alive_timeout_sec|`int64`|
 |id|`int64`|
 |kind|`utf8`|
 |name|`utf8`|

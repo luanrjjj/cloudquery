@@ -16,8 +16,6 @@ The following tables depend on aws_kms_keys:
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -49,3 +47,41 @@ The following tables depend on aws_kms_keys:
 |signing_algorithms|`list<item: utf8, nullable>`|
 |valid_to|`timestamp[us, tz=UTC]`|
 |xks_key_configuration|`json`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### AWS KMS keys should not be unintentionally deleted
+
+```sql
+SELECT
+  'AWS KMS keys should not be unintentionally deleted' AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN key_state = 'PendingDeletion' AND key_manager = 'CUSTOMER' THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_kms_keys;
+```
+
+### Ensure rotation for customer created custom master keys is enabled (Scored)
+
+```sql
+SELECT
+  'Ensure rotation for customer created custom master keys is enabled (Scored)'
+    AS title,
+  account_id,
+  arn,
+  CASE
+  WHEN rotation_enabled IS false AND key_manager = 'CUSTOMER' THEN 'fail'
+  ELSE 'pass'
+  END
+FROM
+  aws_kms_keys;
+```
+
+

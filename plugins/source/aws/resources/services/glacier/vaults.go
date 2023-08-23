@@ -3,14 +3,14 @@ package glacier
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/glacier"
 	"github.com/aws/aws-sdk-go-v2/service/glacier/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Vaults() *schema.Table {
@@ -46,12 +46,12 @@ func Vaults() *schema.Table {
 }
 
 func fetchGlacierVaults(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Glacier
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceGlacier).Glacier
 	paginator := glacier.NewListVaultsPaginator(svc, &glacier.ListVaultsInput{})
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *glacier.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -63,7 +63,7 @@ func fetchGlacierVaults(ctx context.Context, meta schema.ClientMeta, parent *sch
 
 func resolveGlacierVaultTags(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Glacier
+	svc := cl.Services(client.AWSServiceGlacier).Glacier
 	it := resource.Item.(types.DescribeVaultOutput)
 	out, err := svc.ListTagsForVault(ctx, &glacier.ListTagsForVaultInput{
 		VaultName: it.VaultName,

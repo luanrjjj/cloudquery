@@ -54,8 +54,17 @@ export default function Nextra({ Component, pageProps }) {
                 : (window.sa_event.q = [a]);
             })}
       </Script>
-      <Script defer data-domain="cloudquery.io" src="https://plausible.io/js/script.js"></Script>
       <Script src="https://scripts.simpleanalyticscdn.com/latest.js" />
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=AW-11077035012`}
+      />
+      <Script id="google-tag-manager">
+        {`window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+            
+          gtag('config', 'AW-11077035012');`}
+      </Script>
       <noscript>
         {/* eslint-disable @next/next/no-img-element */}
         <img

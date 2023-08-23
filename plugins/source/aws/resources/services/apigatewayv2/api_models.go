@@ -10,17 +10,16 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2"
 	"github.com/aws/aws-sdk-go-v2/service/apigatewayv2/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func apiModels() *schema.Table {
 	tableName := "aws_apigatewayv2_api_models"
 	return &schema.Table{
 		Name:        tableName,
-		Description: `https://docs.aws.amazon.com/apigateway/latest/api/API_Model.html`,
+		Description: `https://docs.aws.amazon.com/apigatewayv2/latest/api-reference/apis-apiid-models.html`,
 		Resolver:    fetchApigatewayv2ApiModels,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "apigateway"),
 		Transform:   transformers.TransformWithStruct(&types.Model{}),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(true),
@@ -54,12 +53,12 @@ func fetchApigatewayv2ApiModels(ctx context.Context, meta schema.ClientMeta, par
 	config := apigatewayv2.GetModelsInput{
 		ApiId: r.ApiId,
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Apigatewayv2
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceApigatewayv2).Apigatewayv2
 	// No paginator available
 	for {
 		response, err := svc.GetModels(ctx, &config, func(options *apigatewayv2.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 
 		if err != nil {
@@ -82,7 +81,7 @@ func resolveApigatewayv2apiModelModelTemplate(ctx context.Context, meta schema.C
 		ModelId: r.ModelId,
 	}
 	cl := meta.(*client.Client)
-	svc := cl.Services().Apigatewayv2
+	svc := cl.Services(client.AWSServiceApigatewayv2).Apigatewayv2
 
 	response, err := svc.GetModelTemplate(ctx, &config, func(options *apigatewayv2.Options) {
 		options.Region = cl.Region

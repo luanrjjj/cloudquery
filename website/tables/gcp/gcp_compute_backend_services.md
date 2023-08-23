@@ -10,8 +10,6 @@ The primary key for this table is **self_link**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id|`utf8`|
@@ -40,6 +38,7 @@ The primary key for this table is **self_link**.
 |locality_lb_policy|`utf8`|
 |log_config|`json`|
 |max_stream_duration|`json`|
+|metadatas|`json`|
 |name|`utf8`|
 |network|`utf8`|
 |outlier_detection|`json`|

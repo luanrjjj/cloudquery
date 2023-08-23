@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/emr"
 	"github.com/aws/aws-sdk-go-v2/service/emr/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func clusterInstanceGroups() *schema.Table {
@@ -17,7 +17,6 @@ func clusterInstanceGroups() *schema.Table {
 		Name:        tableName,
 		Description: `https://docs.aws.amazon.com/emr/latest/APIReference/API_InstanceGroup.html`,
 		Resolver:    fetchClusterInstanceGroups,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "elasticmapreduce"),
 		Transform:   transformers.TransformWithStruct(&types.InstanceGroup{}, transformers.WithPrimaryKeys("Id")),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
@@ -38,14 +37,14 @@ func fetchClusterInstanceGroups(ctx context.Context, meta schema.ClientMeta, par
 	if cluster.InstanceCollectionType != types.InstanceCollectionTypeInstanceGroup {
 		return nil
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Emr
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceEmr).Emr
 	paginator := emr.NewListInstanceGroupsPaginator(svc, &emr.ListInstanceGroupsInput{
 		ClusterId: cluster.Id,
 	})
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *emr.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

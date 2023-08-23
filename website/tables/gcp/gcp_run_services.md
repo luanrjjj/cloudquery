@@ -14,8 +14,6 @@ This table depends on [gcp_run_locations](gcp_run_locations).
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -45,5 +43,7 @@ This table depends on [gcp_run_locations](gcp_run_locations).
 |latest_created_revision|`utf8`|
 |traffic_statuses|`json`|
 |uri|`utf8`|
+|custom_audiences|`list<item: utf8, nullable>`|
+|satisfies_pzs|`bool`|
 |reconciling|`bool`|
 |etag|`utf8`|

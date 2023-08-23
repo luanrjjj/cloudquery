@@ -10,8 +10,6 @@ The primary key for this table is **arn**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -38,3 +36,23 @@ The primary key for this table is **arn**.
 |number_of_connections|`int64`|
 |owner_account|`utf8`|
 |provider_name|`utf8`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Direct Connect LAGs with no connections
+
+```sql
+SELECT
+  'Direct Connect LAGs with no connections' AS title,
+  account_id,
+  arn AS resource_id,
+  'fail' AS status
+FROM
+  aws_directconnect_lags
+WHERE
+  number_of_connections = 0 OR COALESCE(jsonb_array_length(connections), 0) = 0;
+```
+
+

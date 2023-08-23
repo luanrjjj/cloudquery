@@ -17,8 +17,6 @@ The following tables depend on aws_ecs_cluster_services:
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -55,3 +53,28 @@ The following tables depend on aws_ecs_cluster_services:
 |status|`utf8`|
 |task_definition|`utf8`|
 |task_sets|`json`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Amazon ECS services should not have public IP addresses assigned to them automatically
+
+```sql
+SELECT
+  'Amazon ECS services should not have public IP addresses assigned to them automatically'
+    AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN network_configuration->'AwsvpcConfiguration'->>'AssignPublicIp'
+  IS DISTINCT FROM 'DISABLED'
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_ecs_cluster_services;
+```
+
+

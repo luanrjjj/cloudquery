@@ -8,19 +8,20 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/servicebus/armservicebus"
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/cloudquery/cloudquery/plugins/source/azure/client"
-	"github.com/cloudquery/plugin-sdk/v3/faker"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/faker"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/gorilla/mux"
 )
 
 func topicRuleAccessKeys() *schema.Table {
 	return &schema.Table{
-		Name:        "azure_servicebus_namespace_topic_rule_access_keys",
-		Resolver:    fetchTopicRuleAccessKeys,
-		Description: "https://learn.microsoft.com/en-us/rest/api/servicebus/stable/topics%20%E2%80%93%20authorization%20rules/list-keys?tabs=HTTP#accesskeys",
-		Multiplex:   client.SubscriptionMultiplexRegisteredNamespace("azure_servicebus_namespaces", client.Namespacemicrosoft_servicebus),
-		Transform:   transformers.TransformWithStruct(&armservicebus.AccessKeys{}, transformers.WithPrimaryKeys("KeyName")),
+		Name:                 "azure_servicebus_namespace_topic_rule_access_keys",
+		Resolver:             fetchTopicRuleAccessKeys,
+		PostResourceResolver: client.LowercaseIDResolver,
+		Description:          "https://learn.microsoft.com/en-us/rest/api/servicebus/stable/topics%20%E2%80%93%20authorization%20rules/list-keys?tabs=HTTP#accesskeys",
+		Multiplex:            client.SubscriptionMultiplexRegisteredNamespace("azure_servicebus_namespaces", client.Namespacemicrosoft_servicebus),
+		Transform:            transformers.TransformWithStruct(&armservicebus.AccessKeys{}, transformers.WithPrimaryKeys("KeyName")),
 		Columns: schema.ColumnList{
 			client.SubscriptionID,
 			schema.Column{

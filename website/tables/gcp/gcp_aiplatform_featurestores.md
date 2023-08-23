@@ -14,8 +14,6 @@ This table depends on [gcp_aiplatform_featurestore_locations](gcp_aiplatform_fea
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -26,4 +24,5 @@ This table depends on [gcp_aiplatform_featurestore_locations](gcp_aiplatform_fea
 |labels|`json`|
 |online_serving_config|`json`|
 |state|`utf8`|
+|online_storage_ttl_days|`int64`|
 |encryption_spec|`json`|

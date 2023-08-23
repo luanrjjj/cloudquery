@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/guardduty"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/resources/services/guardduty/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func detectorFilters() *schema.Table {
@@ -19,7 +19,6 @@ func detectorFilters() *schema.Table {
 		Resolver:            fetchDetectorFilters,
 		PreResourceResolver: getDetectorFilter,
 		Transform:           transformers.TransformWithStruct(&guardduty.GetFilterOutput{}, transformers.WithPrimaryKeys("Name"), transformers.WithSkipFields("ResultMetadata")),
-		Multiplex:           client.ServiceAccountRegionMultiplexer(tableName, "guardduty"),
 		Columns: []schema.Column{
 			{
 				Name:       "detector_arn",
@@ -34,15 +33,15 @@ func detectorFilters() *schema.Table {
 func fetchDetectorFilters(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	detector := parent.Item.(*models.DetectorWrapper)
 
-	c := meta.(*client.Client)
-	svc := c.Services().Guardduty
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceGuardduty).Guardduty
 	config := &guardduty.ListFiltersInput{
 		DetectorId: &detector.Id,
 	}
 	paginator := guardduty.NewListFiltersPaginator(svc, config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *guardduty.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -53,8 +52,8 @@ func fetchDetectorFilters(ctx context.Context, meta schema.ClientMeta, parent *s
 }
 
 func getDetectorFilter(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Guardduty
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceGuardduty).Guardduty
 	filterName := resource.Item.(string)
 	detector := resource.Parent.Item.(*models.DetectorWrapper)
 
@@ -62,7 +61,7 @@ func getDetectorFilter(ctx context.Context, meta schema.ClientMeta, resource *sc
 		DetectorId: &detector.Id,
 		FilterName: &filterName,
 	}, func(options *guardduty.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

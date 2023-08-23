@@ -10,8 +10,6 @@ The primary key for this table is **arn**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |account_id|`utf8`|
@@ -26,6 +24,7 @@ The primary key for this table is **arn**.
 |db_cluster_snapshot_arn|`utf8`|
 |db_cluster_snapshot_identifier|`utf8`|
 |db_system_id|`utf8`|
+|db_cluster_resource_id|`utf8`|
 |engine|`utf8`|
 |engine_mode|`utf8`|
 |engine_version|`utf8`|
@@ -40,4 +39,59 @@ The primary key for this table is **arn**.
 |source_db_cluster_snapshot_arn|`utf8`|
 |status|`utf8`|
 |storage_encrypted|`bool`|
+|storage_type|`utf8`|
 |vpc_id|`utf8`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### RDS cluster snapshots and database snapshots should be encrypted at rest
+
+```sql
+(
+  SELECT
+    'RDS cluster snapshots and database snapshots should be encrypted at rest'
+      AS title,
+    account_id,
+    arn AS resource_id,
+    CASE
+    WHEN storage_encrypted IS NOT true THEN 'fail'
+    ELSE 'pass'
+    END
+      AS status
+  FROM
+    aws_rds_cluster_snapshots
+)
+UNION
+  (
+    SELECT
+      'RDS cluster snapshots and database snapshots should be encrypted at rest'
+        AS title,
+      account_id,
+      arn AS resource_id,
+      CASE WHEN encrypted IS NOT true THEN 'fail' ELSE 'pass' END AS status
+    FROM
+      aws_rds_db_snapshots
+  );
+```
+
+### RDS snapshots should be private
+
+```sql
+SELECT
+  'RDS snapshots should be private' AS title,
+  account_id,
+  arn AS resource_id,
+  CASE
+  WHEN attrs->>'AttributeName' IS NOT DISTINCT FROM 'restore'
+  AND (attrs->'AttributeValues')::JSONB ? 'all'
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  aws_rds_cluster_snapshots, jsonb_array_elements(attributes) AS attrs;
+```
+
+

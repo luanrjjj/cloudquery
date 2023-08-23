@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/workspaces"
 	"github.com/aws/aws-sdk-go-v2/service/workspaces/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Workspaces() *schema.Table {
@@ -34,7 +34,7 @@ func Workspaces() *schema.Table {
 
 func fetchWorkspacesWorkspaces(ctx context.Context, meta schema.ClientMeta, _ *schema.Resource, res chan<- any) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Workspaces
+	svc := cl.Services(client.AWSServiceWorkspaces).Workspaces
 	input := workspaces.DescribeWorkspacesInput{}
 	paginator := workspaces.NewDescribeWorkspacesPaginator(svc, &input)
 	for paginator.HasMorePages() {

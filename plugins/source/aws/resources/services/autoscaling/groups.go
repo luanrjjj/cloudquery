@@ -3,7 +3,7 @@ package autoscaling
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -11,8 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/autoscaling/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/resources/services/autoscaling/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Groups() *schema.Table {
@@ -64,8 +64,8 @@ func Groups() *schema.Table {
 }
 
 func fetchAutoscalingGroups(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Autoscaling
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAutoscaling).Autoscaling
 	processGroupsBundle := func(groups []types.AutoScalingGroup) error {
 		input := autoscaling.DescribeNotificationConfigurationsInput{
 			MaxRecords: aws.Int32(100),
@@ -77,7 +77,7 @@ func fetchAutoscalingGroups(ctx context.Context, meta schema.ClientMeta, parent 
 		paginator := autoscaling.NewDescribeNotificationConfigurationsPaginator(svc, &input)
 		for paginator.HasMorePages() {
 			page, err := paginator.NextPage(ctx, func(options *autoscaling.Options) {
-				options.Region = c.Region
+				options.Region = cl.Region
 			})
 			if err != nil {
 				return err
@@ -98,7 +98,7 @@ func fetchAutoscalingGroups(ctx context.Context, meta schema.ClientMeta, parent 
 	paginator := autoscaling.NewDescribeAutoScalingGroupsPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *autoscaling.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -123,7 +123,7 @@ func fetchAutoscalingGroups(ctx context.Context, meta schema.ClientMeta, parent 
 func resolveAutoscalingGroupLoadBalancers(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	p := resource.Item.(models.AutoScalingGroupWrapper)
 	cl := meta.(*client.Client)
-	svc := cl.Services().Autoscaling
+	svc := cl.Services(client.AWSServiceAutoscaling).Autoscaling
 	config := autoscaling.DescribeLoadBalancersInput{AutoScalingGroupName: p.AutoScalingGroupName}
 	j := map[string]any{}
 	// No paginator available
@@ -151,7 +151,7 @@ func resolveAutoscalingGroupLoadBalancers(ctx context.Context, meta schema.Clien
 func resolveAutoscalingGroupLoadBalancerTargetGroups(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	p := resource.Item.(models.AutoScalingGroupWrapper)
 	cl := meta.(*client.Client)
-	svc := cl.Services().Autoscaling
+	svc := cl.Services(client.AWSServiceAutoscaling).Autoscaling
 	config := autoscaling.DescribeLoadBalancerTargetGroupsInput{AutoScalingGroupName: p.AutoScalingGroupName}
 	j := map[string]any{}
 	// No paginator available

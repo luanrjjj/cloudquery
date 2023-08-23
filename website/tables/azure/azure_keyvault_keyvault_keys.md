@@ -14,8 +14,6 @@ This table depends on [azure_keyvault_keyvault](azure_keyvault_keyvault).
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |properties|`json`|
@@ -24,3 +22,28 @@ This table depends on [azure_keyvault_keyvault](azure_keyvault_keyvault).
 |name|`utf8`|
 |tags|`json`|
 |type|`utf8`|
+
+## Example Queries
+
+These SQL queries are sampled from CloudQuery policies and are compatible with PostgreSQL.
+
+### Ensure that the expiration date is set on all keys (Automated)
+
+```sql
+SELECT
+  'Ensure that the expiration date is set on all keys (Automated)' AS title,
+  akv.subscription_id AS subscription_id,
+  akvk.id AS resource_id,
+  CASE
+  WHEN (akvk.properties->'attributes'->>'enabled')::BOOL = true
+  AND (akvk.properties->'attributes'->>'exp') IS NULL
+  THEN 'fail'
+  ELSE 'pass'
+  END
+    AS status
+FROM
+  azure_keyvault_keyvault AS akv
+  JOIN azure_keyvault_keyvault_keys AS akvk ON akv._cq_id = akvk._cq_parent_id;
+```
+
+

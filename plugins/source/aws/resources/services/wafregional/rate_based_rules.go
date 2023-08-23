@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/wafregional"
 	"github.com/aws/aws-sdk-go-v2/service/wafregional/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func RateBasedRules() *schema.Table {
@@ -44,7 +44,7 @@ func RateBasedRules() *schema.Table {
 
 func fetchWafregionalRateBasedRules(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Wafregional
+	svc := cl.Services(client.AWSServiceWafregional).Wafregional
 	var params wafregional.ListRateBasedRulesInput
 	for {
 		result, err := svc.ListRateBasedRules(ctx, &params, func(o *wafregional.Options) {
@@ -81,7 +81,7 @@ func resolveWafregionalRateBasedRuleArn(ctx context.Context, meta schema.ClientM
 }
 func resolveWafregionalRateBasedRuleTags(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Wafregional
+	svc := cl.Services(client.AWSServiceWafregional).Wafregional
 	arnStr := rateBasedRuleARN(meta, *resource.Item.(types.RateBasedRule).RuleId)
 	params := wafregional.ListTagsForResourceInput{ResourceARN: &arnStr}
 	tags := make(map[string]string)

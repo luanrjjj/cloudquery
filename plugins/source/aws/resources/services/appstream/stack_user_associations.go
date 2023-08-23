@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/appstream"
 	"github.com/aws/aws-sdk-go-v2/service/appstream/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func stackUserAssociations() *schema.Table {
@@ -18,7 +18,6 @@ func stackUserAssociations() *schema.Table {
 		Name:        tableName,
 		Description: `https://docs.aws.amazon.com/appstream2/latest/APIReference/API_UserStackAssociation.html`,
 		Resolver:    fetchAppstreamStackUserAssociations,
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "appstream2"),
 		Transform:   transformers.TransformWithStruct(&types.UserStackAssociation{}),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(true),
@@ -50,12 +49,12 @@ func fetchAppstreamStackUserAssociations(ctx context.Context, meta schema.Client
 	input.StackName = parent.Item.(types.Stack).Name
 	input.MaxResults = aws.Int32(25)
 
-	c := meta.(*client.Client)
-	svc := c.Services().Appstream
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAppstream).Appstream
 	// No paginator available
 	for {
 		response, err := svc.DescribeUserStackAssociations(ctx, &input, func(options *appstream.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

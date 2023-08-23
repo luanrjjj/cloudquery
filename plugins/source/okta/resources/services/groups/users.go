@@ -6,7 +6,7 @@ import (
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/cloudquery/cloudquery/plugins/source/okta/client"
 	"github.com/cloudquery/cloudquery/plugins/source/okta/resources/services/groups/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
 	"github.com/okta/okta-sdk-golang/v3/okta"
 )
 
@@ -26,7 +26,11 @@ func users() *schema.Table {
 	}
 }
 
-func fetchUsers(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
+func fetchUsers(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) (err error) {
+	defer func() {
+		err = client.ProcessOktaAPIError(err)
+	}()
+
 	cl := meta.(*client.Client)
 	grp := parent.Item.(okta.Group)
 

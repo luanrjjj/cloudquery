@@ -3,15 +3,15 @@ package lightsail
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/lightsail"
 	"github.com/aws/aws-sdk-go-v2/service/lightsail/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Instances() *schema.Table {
@@ -49,13 +49,13 @@ func Instances() *schema.Table {
 }
 
 func fetchLightsailInstances(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Lightsail
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceLightsail).Lightsail
 	input := lightsail.GetInstancesInput{}
 	// No paginator available
 	for {
 		output, err := svc.GetInstances(ctx, &input, func(options *lightsail.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -72,7 +72,7 @@ func fetchLightsailInstances(ctx context.Context, meta schema.ClientMeta, parent
 func resolveLightsailInstanceAccessDetails(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	r := resource.Item.(types.Instance)
 	cli := meta.(*client.Client)
-	svc := cli.Services().Lightsail
+	svc := cli.Services(client.AWSServiceLightsail).Lightsail
 	input := lightsail.GetInstanceAccessDetailsInput{InstanceName: r.Name}
 	output, err := svc.GetInstanceAccessDetails(ctx, &input, func(options *lightsail.Options) {
 		options.Region = cli.Region

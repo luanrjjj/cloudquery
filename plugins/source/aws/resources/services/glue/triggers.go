@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/glue"
 	"github.com/aws/aws-sdk-go-v2/service/glue/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Triggers() *schema.Table {
@@ -44,13 +44,13 @@ func Triggers() *schema.Table {
 }
 
 func fetchGlueTriggers(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Glue
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceGlue).Glue
 	input := glue.ListTriggersInput{MaxResults: aws.Int32(200)}
 	paginator := glue.NewListTriggersPaginator(svc, &input)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *glue.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -61,13 +61,13 @@ func fetchGlueTriggers(ctx context.Context, meta schema.ClientMeta, parent *sche
 }
 
 func getTrigger(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
+	cl := meta.(*client.Client)
 	name := resource.Item.(string)
-	svc := c.Services().Glue
+	svc := cl.Services(client.AWSServiceGlue).Glue
 	dc, err := svc.GetTrigger(ctx, &glue.GetTriggerInput{
 		Name: &name,
 	}, func(options *glue.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ func resolveGlueTriggerArn(ctx context.Context, meta schema.ClientMeta, resource
 
 func resolveGlueTriggerTags(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Glue
+	svc := cl.Services(client.AWSServiceGlue).Glue
 	result, err := svc.GetTags(ctx, &glue.GetTagsInput{
 		ResourceArn: aws.String(triggerARN(cl, aws.ToString(resource.Item.(types.Trigger).Name))),
 	}, func(options *glue.Options) {

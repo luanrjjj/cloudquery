@@ -9,8 +9,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ecrpublic"
 	"github.com/aws/aws-sdk-go-v2/service/ecrpublic/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func repositoryImages() *schema.Table {
@@ -38,12 +38,12 @@ func fetchEcrpublicRepositoryImages(ctx context.Context, meta schema.ClientMeta,
 		RepositoryName: p.RepositoryName,
 		MaxResults:     aws.Int32(1000),
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Ecrpublic
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceEcrpublic).Ecrpublic
 	paginator := ecrpublic.NewDescribeImagesPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *ecrpublic.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

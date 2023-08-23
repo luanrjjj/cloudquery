@@ -17,8 +17,6 @@ The following tables depend on gcp_kms_crypto_keys:
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -28,6 +26,7 @@ The following tables depend on gcp_kms_crypto_keys:
 |purpose|`utf8`|
 |create_time|`timestamp[us, tz=UTC]`|
 |next_rotation_time|`timestamp[us, tz=UTC]`|
+|rotation_schedule|`json`|
 |version_template|`json`|
 |labels|`json`|
 |import_only|`bool`|

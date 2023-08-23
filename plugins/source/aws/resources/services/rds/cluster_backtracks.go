@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/rds"
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func clusterBacktracks() *schema.Table {
@@ -45,12 +45,12 @@ func fetchRdsClusterBacktracks(ctx context.Context, meta schema.ClientMeta, pare
 	config := rds.DescribeDBClusterBacktracksInput{
 		DBClusterIdentifier: cluster.DBClusterIdentifier,
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Rds
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceRds).Rds
 	p := rds.NewDescribeDBClusterBacktracksPaginator(svc, &config)
 	for p.HasMorePages() {
 		resp, err := p.NextPage(ctx, func(options *rds.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

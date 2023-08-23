@@ -7,8 +7,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/computeoptimizer"
 	"github.com/aws/aws-sdk-go-v2/service/computeoptimizer/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 )
 
 func EcsServiceRecommendations() *schema.Table {
@@ -21,14 +22,18 @@ func EcsServiceRecommendations() *schema.Table {
 		Transform:   transformers.TransformWithStruct(&types.ECSServiceRecommendation{}, transformers.WithPrimaryKeys("ServiceArn")),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
+			{
+				Name:     "tags",
+				Type:     sdkTypes.ExtensionTypes.JSON,
+				Resolver: client.ResolveTags,
+			},
 		},
 	}
 }
 
 func fetchEcsServiceRecommendations(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	s := c.Services()
-	svc := s.Computeoptimizer
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceComputeoptimizer).Computeoptimizer
 
 	input := computeoptimizer.GetECSServiceRecommendationsInput{
 		MaxResults: aws.Int32(1000),
@@ -36,14 +41,14 @@ func fetchEcsServiceRecommendations(ctx context.Context, meta schema.ClientMeta,
 	// No paginator available
 	for {
 		response, err := svc.GetECSServiceRecommendations(ctx, &input, func(options *computeoptimizer.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
 		}
 
 		if len(response.Errors) > 0 {
-			c.Logger().Error().Str("table", "aws_computeoptimizer_ecs_service_recommendations").Msgf("Errors in response: %v", response.Errors)
+			cl.Logger().Error().Str("table", "aws_computeoptimizer_ecs_service_recommendations").Msgf("Errors in response: %v", response.Errors)
 		}
 
 		if response.EcsServiceRecommendations != nil {

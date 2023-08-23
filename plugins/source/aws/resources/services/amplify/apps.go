@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/amplify"
 	"github.com/aws/aws-sdk-go-v2/service/amplify/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Apps() *schema.Table {
@@ -34,8 +34,8 @@ func Apps() *schema.Table {
 }
 
 func fetchApps(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := meta.(*client.Client).Services().Amplify
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAmplify).Amplify
 
 	config := amplify.ListAppsInput{
 		MaxResults: int32(100),
@@ -43,7 +43,7 @@ func fetchApps(ctx context.Context, meta schema.ClientMeta, parent *schema.Resou
 	// No paginator available
 	for {
 		output, err := svc.ListApps(ctx, &config, func(options *amplify.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

@@ -14,8 +14,6 @@ This table depends on [gcp_aiplatform_tensorboard_locations](gcp_aiplatform_tens
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -29,3 +27,4 @@ This table depends on [gcp_aiplatform_tensorboard_locations](gcp_aiplatform_tens
 |update_time|`timestamp[us, tz=UTC]`|
 |labels|`json`|
 |etag|`utf8`|
+|is_default|`bool`|

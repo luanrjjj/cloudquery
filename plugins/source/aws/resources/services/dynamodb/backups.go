@@ -8,8 +8,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func Backups() *schema.Table {
@@ -35,14 +35,14 @@ func Backups() *schema.Table {
 }
 
 func listBackups(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Dynamodb
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	config := dynamodb.ListBackupsInput{}
 	// No paginator available
 	for {
 		output, err := svc.ListBackups(ctx, &config, func(options *dynamodb.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -60,7 +60,7 @@ func listBackups(ctx context.Context, meta schema.ClientMeta, parent *schema.Res
 
 func getBackup(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Dynamodb
+	svc := cl.Services(client.AWSServiceDynamodb).Dynamodb
 
 	backupSummary := resource.Item.(types.BackupSummary)
 

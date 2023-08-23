@@ -125,6 +125,36 @@ func (mr *MockCloudformationClientMockRecorder) DescribeChangeSetHooks(arg0, arg
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeChangeSetHooks", reflect.TypeOf((*MockCloudformationClient)(nil).DescribeChangeSetHooks), varargs...)
 }
 
+// DescribeOrganizationsAccess mocks base method.
+func (m *MockCloudformationClient) DescribeOrganizationsAccess(arg0 context.Context, arg1 *cloudformation.DescribeOrganizationsAccessInput, arg2 ...func(*cloudformation.Options)) (*cloudformation.DescribeOrganizationsAccessOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &cloudformation.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to DescribeOrganizationsAccess")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "DescribeOrganizationsAccess", varargs...)
+	ret0, _ := ret[0].(*cloudformation.DescribeOrganizationsAccessOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// DescribeOrganizationsAccess indicates an expected call of DescribeOrganizationsAccess.
+func (mr *MockCloudformationClientMockRecorder) DescribeOrganizationsAccess(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DescribeOrganizationsAccess", reflect.TypeOf((*MockCloudformationClient)(nil).DescribeOrganizationsAccess), varargs...)
+}
+
 // DescribePublisher mocks base method.
 func (m *MockCloudformationClient) DescribePublisher(arg0 context.Context, arg1 *cloudformation.DescribePublisherInput, arg2 ...func(*cloudformation.Options)) (*cloudformation.DescribePublisherOutput, error) {
 
@@ -663,6 +693,36 @@ func (mr *MockCloudformationClientMockRecorder) ListImports(arg0, arg1 interface
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1}, arg2...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListImports", reflect.TypeOf((*MockCloudformationClient)(nil).ListImports), varargs...)
+}
+
+// ListStackInstanceResourceDrifts mocks base method.
+func (m *MockCloudformationClient) ListStackInstanceResourceDrifts(arg0 context.Context, arg1 *cloudformation.ListStackInstanceResourceDriftsInput, arg2 ...func(*cloudformation.Options)) (*cloudformation.ListStackInstanceResourceDriftsOutput, error) {
+
+	// Assertion inserted by client/mockgen/main.go
+	o := &cloudformation.Options{}
+	for _, f := range arg2 {
+		f(o)
+	}
+	if o.Region == "" {
+		m.ctrl.T.Errorf("Region not set in call to ListStackInstanceResourceDrifts")
+	}
+
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ListStackInstanceResourceDrifts", varargs...)
+	ret0, _ := ret[0].(*cloudformation.ListStackInstanceResourceDriftsOutput)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ListStackInstanceResourceDrifts indicates an expected call of ListStackInstanceResourceDrifts.
+func (mr *MockCloudformationClientMockRecorder) ListStackInstanceResourceDrifts(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ListStackInstanceResourceDrifts", reflect.TypeOf((*MockCloudformationClient)(nil).ListStackInstanceResourceDrifts), varargs...)
 }
 
 // ListStackInstances mocks base method.

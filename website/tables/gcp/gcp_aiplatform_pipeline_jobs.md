@@ -14,8 +14,6 @@ This table depends on [gcp_aiplatform_pipeline_locations](gcp_aiplatform_pipelin
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id (PK)|`utf8`|
@@ -34,5 +32,6 @@ This table depends on [gcp_aiplatform_pipeline_locations](gcp_aiplatform_pipelin
 |encryption_spec|`json`|
 |service_account|`utf8`|
 |network|`utf8`|
+|reserved_ip_ranges|`list<item: utf8, nullable>`|
 |template_uri|`utf8`|
 |template_metadata|`json`|

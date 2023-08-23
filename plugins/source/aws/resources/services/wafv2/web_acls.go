@@ -3,7 +3,7 @@ package wafv2
 import (
 	"context"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/wafv2/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/resources/services/wafv2/models"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func WebAcls() *schema.Table {
@@ -50,7 +50,7 @@ func WebAcls() *schema.Table {
 
 func fetchWafv2WebAcls(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	cl := meta.(*client.Client)
-	service := cl.Services().Wafv2
+	service := cl.Services(client.AWSServiceWafv2).Wafv2
 
 	config := wafv2.ListWebACLsInput{
 		Scope: cl.WAFScope,
@@ -76,7 +76,7 @@ func fetchWafv2WebAcls(ctx context.Context, meta schema.ClientMeta, parent *sche
 
 func getWebAcl(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
 	cl := meta.(*client.Client)
-	svc := cl.Services().Wafv2
+	svc := cl.Services(client.AWSServiceWafv2).Wafv2
 	webAcl := resource.Item.(types.WebACLSummary)
 
 	webAclConfig := wafv2.GetWebACLInput{Id: webAcl.Id, Name: webAcl.Name, Scope: cl.WAFScope}
@@ -118,11 +118,11 @@ func resolveWafv2webACLResourcesForWebACL(ctx context.Context, meta schema.Clien
 	webACL := resource.Item.(*models.WebACLWrapper)
 
 	cl := meta.(*client.Client)
-	service := cl.Services().Wafv2
+	service := cl.Services(client.AWSServiceWafv2).Wafv2
 
 	resourceArns := []string{}
 	if cl.WAFScope == types.ScopeCloudfront {
-		cloudfrontService := cl.Services().Cloudfront
+		cloudfrontService := cl.Services(client.AWSServiceCloudfront).Cloudfront
 		params := &cloudfront.ListDistributionsByWebACLIdInput{
 			WebACLId: webACL.Id,
 			MaxItems: aws.Int32(100),
@@ -143,13 +143,20 @@ func resolveWafv2webACLResourcesForWebACL(ctx context.Context, meta schema.Clien
 			params.Marker = output.DistributionList.NextMarker
 		}
 	} else {
-		output, err := service.ListResourcesForWebACL(ctx, &wafv2.ListResourcesForWebACLInput{WebACLArn: webACL.ARN}, func(o *wafv2.Options) {
-			o.Region = cl.Region
-		})
-		if err != nil {
-			return err
+		var resourceType types.ResourceType
+		for _, resType := range resourceType.Values() {
+			output, err := service.ListResourcesForWebACL(ctx,
+				&wafv2.ListResourcesForWebACLInput{
+					WebACLArn:    webACL.ARN,
+					ResourceType: resType,
+				}, func(o *wafv2.Options) {
+					o.Region = cl.Region
+				})
+			if err != nil {
+				return err
+			}
+			resourceArns = append(resourceArns, output.ResourceArns...)
 		}
-		resourceArns = output.ResourceArns
 	}
 	return resource.Set(c.Name, resourceArns)
 }
@@ -157,7 +164,7 @@ func resolveWebACLTags(ctx context.Context, meta schema.ClientMeta, resource *sc
 	webACL := resource.Item.(*models.WebACLWrapper)
 
 	cl := meta.(*client.Client)
-	service := cl.Services().Wafv2
+	service := cl.Services(client.AWSServiceWafv2).Wafv2
 
 	// Resolve tags
 	outputTags := make(map[string]*string)

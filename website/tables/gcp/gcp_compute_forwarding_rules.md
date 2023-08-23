@@ -10,8 +10,6 @@ The primary key for this table is **self_link**.
 
 | Name          | Type          |
 | ------------- | ------------- |
-|_cq_source_name|`utf8`|
-|_cq_sync_time|`timestamp[us, tz=UTC]`|
 |_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |project_id|`utf8`|
@@ -19,6 +17,7 @@ The primary key for this table is **self_link**.
 |ip_protocol|`utf8`|
 |all_ports|`bool`|
 |allow_global_access|`bool`|
+|allow_psc_global_access|`bool`|
 |backend_service|`utf8`|
 |base_forwarding_rule|`utf8`|
 |creation_timestamp|`utf8`|

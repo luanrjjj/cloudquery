@@ -5,6 +5,249 @@ All notable changes to CloudQuery will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.14.2](https://github.com/cloudquery/cloudquery/compare/cli-v3.14.1...cli-v3.14.2) (2023-08-23)
+
+
+### Bug Fixes
+
+* Apply schema and record transformations for v2 sources with v3 destinations ([#13291](https://github.com/cloudquery/cloudquery/issues/13291)) ([5fd5b59](https://github.com/cloudquery/cloudquery/commit/5fd5b59dca33b18910d7bd661eb11a514c2e6cee))
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to 5b83d4f ([#13203](https://github.com/cloudquery/cloudquery/issues/13203)) ([b0a4b8c](https://github.com/cloudquery/cloudquery/commit/b0a4b8ccf7c429bf5a6ed88866865212015b68e4))
+* **deps:** Update module github.com/cloudquery/plugin-sdk/v4 to v4.5.1 ([#13195](https://github.com/cloudquery/cloudquery/issues/13195)) ([a184c37](https://github.com/cloudquery/cloudquery/commit/a184c3786ad49df8564344773e9b96f617ef87a1))
+* **deps:** Update module github.com/cloudquery/plugin-sdk/v4 to v4.5.2 ([#13262](https://github.com/cloudquery/cloudquery/issues/13262)) ([5c55aa3](https://github.com/cloudquery/cloudquery/commit/5c55aa35282786375e8ce9493b2a4878e0fb27bc))
+
+## [3.14.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.14.0...cli-v3.14.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.9.3 ([#13169](https://github.com/cloudquery/cloudquery/issues/13169)) ([f2afb88](https://github.com/cloudquery/cloudquery/commit/f2afb88201f2841bb7b20cf4c0c06f208e65764f))
+
+## [3.14.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.13.1...cli-v3.14.0) (2023-08-15)
+
+
+### Features
+
+* Add verbose error labels to errors in tables_v3 ([#13001](https://github.com/cloudquery/cloudquery/issues/13001)) ([d1e1f63](https://github.com/cloudquery/cloudquery/commit/d1e1f636ac38974ee1cbed97462f1f36f9947b95))
+
+
+### Bug Fixes
+
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to e9683e1 ([#13015](https://github.com/cloudquery/cloudquery/issues/13015)) ([6557696](https://github.com/cloudquery/cloudquery/commit/65576966d3bd14297499a5b85d3b4fc2c7918df3))
+* **deps:** Update module github.com/cloudquery/plugin-sdk/v4 to v4.5.0 ([#13068](https://github.com/cloudquery/cloudquery/issues/13068)) ([7bb0e4b](https://github.com/cloudquery/cloudquery/commit/7bb0e4ba654971726e16a6a501393e3831170307))
+
+## [3.13.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.13.0...cli-v3.13.1) (2023-08-09)
+
+
+### Bug Fixes
+
+* **main:** Don't migrate in new plugins if `--no-migrate` is used ([#12962](https://github.com/cloudquery/cloudquery/issues/12962)) ([2b3ede7](https://github.com/cloudquery/cloudquery/commit/2b3ede775abf1bb0fede9e804d2fec4f465f16da))
+
+## [3.13.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.12.4...cli-v3.13.0) (2023-08-09)
+
+
+### Features
+
+* Add protocol v3 tables command (move doc generation to CLI) ([#12758](https://github.com/cloudquery/cloudquery/issues/12758)) ([e2e8575](https://github.com/cloudquery/cloudquery/commit/e2e8575cd4fa8733ceb8c8f709dea1179aa68240))
+
+## [3.12.4](https://github.com/cloudquery/cloudquery/compare/cli-v3.12.3...cli-v3.12.4) (2023-08-08)
+
+
+### Bug Fixes
+
+* Add missing `skip_dependent_tables` to tables call ([#12861](https://github.com/cloudquery/cloudquery/issues/12861)) ([4dbc280](https://github.com/cloudquery/cloudquery/commit/4dbc28076c0518e4f534272562af242134200928))
+
+## [3.12.3](https://github.com/cloudquery/cloudquery/compare/cli-v3.12.2...cli-v3.12.3) (2023-08-08)
+
+
+### Bug Fixes
+
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to f53878d ([#12778](https://github.com/cloudquery/cloudquery/issues/12778)) ([6f5d58e](https://github.com/cloudquery/cloudquery/commit/6f5d58e3b84d3c76b1d1a3d6c5a488f77995a057))
+
+## [3.12.2](https://github.com/cloudquery/cloudquery/compare/cli-v3.12.1...cli-v3.12.2) (2023-08-02)
+
+
+### Bug Fixes
+
+* Add warning on usage of top level `backend_spec`, add missing quotes ([#12685](https://github.com/cloudquery/cloudquery/issues/12685)) ([db03f33](https://github.com/cloudquery/cloudquery/commit/db03f3300e3af067791969300389899bea31bc90))
+
+## [3.12.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.12.0...cli-v3.12.1) (2023-08-01)
+
+
+### Bug Fixes
+
+* Add missing `DeleteStale` messages for old destinations ([#12684](https://github.com/cloudquery/cloudquery/issues/12684)) ([5198ed7](https://github.com/cloudquery/cloudquery/commit/5198ed77757d69df5d6e9258a101d85baa73b60a))
+
+## [3.12.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.11.0...cli-v3.12.0) (2023-08-01)
+
+
+### Features
+
+* Support Docker registry in CLI ([#12576](https://github.com/cloudquery/cloudquery/issues/12576)) ([6f31129](https://github.com/cloudquery/cloudquery/commit/6f3112955c0c71f66844304cae96fe23a8872a41))
+
+
+### Bug Fixes
+
+* Add name of destination to error on init ([#12675](https://github.com/cloudquery/cloudquery/issues/12675)) ([095194d](https://github.com/cloudquery/cloudquery/commit/095194d06ab7bd297d64572f849a68f122be5acb))
+* **deps:** Update github.com/apache/arrow/go/v13 digest to 112f949 ([#12659](https://github.com/cloudquery/cloudquery/issues/12659)) ([48d73a9](https://github.com/cloudquery/cloudquery/commit/48d73a93e678994f43171c363f5a75c29547b0b9))
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to 3452eb0 ([#12595](https://github.com/cloudquery/cloudquery/issues/12595)) ([c1c0949](https://github.com/cloudquery/cloudquery/commit/c1c09490b17f2e64435e05d745890cdb8b22310d))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.9.0 ([#12579](https://github.com/cloudquery/cloudquery/issues/12579)) ([4f1f419](https://github.com/cloudquery/cloudquery/commit/4f1f41931cab91667ebfa76a835de3e83b7bd00f))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.9.1 ([#12593](https://github.com/cloudquery/cloudquery/issues/12593)) ([19e8ae3](https://github.com/cloudquery/cloudquery/commit/19e8ae3ecc12e41fa41b247ce139d3a062fef218))
+
+## [3.11.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.10.2...cli-v3.11.0) (2023-07-27)
+
+
+### Features
+
+* **source-spec:** Warn if ineffective options are detected ([#12536](https://github.com/cloudquery/cloudquery/issues/12536)) ([0da111e](https://github.com/cloudquery/cloudquery/commit/0da111e2c5ae175c23be69a318bf92b392584090))
+
+## [3.10.2](https://github.com/cloudquery/cloudquery/compare/cli-v3.10.1...cli-v3.10.2) (2023-07-25)
+
+
+### Bug Fixes
+
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to 10df4b9 ([#12443](https://github.com/cloudquery/cloudquery/issues/12443)) ([e385283](https://github.com/cloudquery/cloudquery/commit/e38528309f862f37bc7e278f9b69cf92d5aa5bd5))
+
+## [3.10.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.10.0...cli-v3.10.1) (2023-07-18)
+
+
+### Bug Fixes
+
+* **cmd-tables:** Better error message for sources with v3 protocol ([#12332](https://github.com/cloudquery/cloudquery/issues/12332)) ([75c0490](https://github.com/cloudquery/cloudquery/commit/75c0490af75971189e67f7791d4e556e1d3133b5))
+* **spec-reader:** Quote content of JSON files that have line breaks during file replacement ([#12294](https://github.com/cloudquery/cloudquery/issues/12294)) ([687f9b9](https://github.com/cloudquery/cloudquery/commit/687f9b9fc224248dda9ce73402f1408c6ce11ce2))
+
+## [3.10.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.9.2...cli-v3.10.0) (2023-07-18)
+
+
+### Features
+
+* **cli:** Add OpenTelemetry support via otel_endpoint ([#12268](https://github.com/cloudquery/cloudquery/issues/12268)) ([3091166](https://github.com/cloudquery/cloudquery/commit/3091166598c9ed665d3b7354e49f6333f40b8109))
+
+
+### Bug Fixes
+
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to 8e2219b ([#12220](https://github.com/cloudquery/cloudquery/issues/12220)) ([24e8fb5](https://github.com/cloudquery/cloudquery/commit/24e8fb588740896fe11a660e8b80231e741b753c))
+
+## [3.9.2](https://github.com/cloudquery/cloudquery/compare/cli-v3.9.1...cli-v3.9.2) (2023-07-14)
+
+
+### Bug Fixes
+
+* **cmd-migrate:** Set `NoConnection` to true ([#12172](https://github.com/cloudquery/cloudquery/issues/12172)) ([f21dc42](https://github.com/cloudquery/cloudquery/commit/f21dc423030a4421567fd22a690e2c03825a07dd))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.7.0 ([#12166](https://github.com/cloudquery/cloudquery/issues/12166)) ([94390dd](https://github.com/cloudquery/cloudquery/commit/94390dde19d0c37fee9d035219d62f6ae7edb127))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.7.1 ([#12178](https://github.com/cloudquery/cloudquery/issues/12178)) ([8e88bf3](https://github.com/cloudquery/cloudquery/commit/8e88bf3c4bee1d63da61d0463038b645cfae8187))
+
+## [3.9.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.9.0...cli-v3.9.1) (2023-07-13)
+
+
+### Bug Fixes
+
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to 0a52533 ([#12091](https://github.com/cloudquery/cloudquery/issues/12091)) ([927cefa](https://github.com/cloudquery/cloudquery/commit/927cefa943ec3969a2ec39b628bc1eba545a2108))
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to a2a76eb ([#12104](https://github.com/cloudquery/cloudquery/issues/12104)) ([311f474](https://github.com/cloudquery/cloudquery/commit/311f4749af2491a606f29483190717a5fe238da6))
+* Improve version mismatch errors to include plugin type ([#12151](https://github.com/cloudquery/cloudquery/issues/12151)) ([137b0fe](https://github.com/cloudquery/cloudquery/commit/137b0fef57ebad7678ea5fcf6fafeb16abd18247))
+
+## [3.9.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.8.1...cli-v3.9.0) (2023-07-07)
+
+
+### Features
+
+* **cli:** Add migrate v3 ([#12051](https://github.com/cloudquery/cloudquery/issues/12051)) ([56c9c04](https://github.com/cloudquery/cloudquery/commit/56c9c04d0e41f1ccb63f710dc7d74b0766f59c8b))
+
+
+### Bug Fixes
+
+* **cli:** Provide helpful message when write fails ([#12056](https://github.com/cloudquery/cloudquery/issues/12056)) ([a6d4ae9](https://github.com/cloudquery/cloudquery/commit/a6d4ae9e4cc4bf24c2cba814dd934d87dd0a198f))
+* **postgresql:** Rerun release please ([#12002](https://github.com/cloudquery/cloudquery/issues/12002)) ([9d12843](https://github.com/cloudquery/cloudquery/commit/9d12843462d1019d26bc239f8f928bf5f62940cf))
+
+## [3.8.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.8.0...cli-v3.8.1) (2023-07-06)
+
+
+### Bug Fixes
+
+* **cli:** Make source_name and sync_time nullable ([#11997](https://github.com/cloudquery/cloudquery/issues/11997)) ([1045c56](https://github.com/cloudquery/cloudquery/commit/1045c56dcaa71c2fb79af004ee88d880326640b4))
+
+## [3.8.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.7.0...cli-v3.8.0) (2023-07-03)
+
+
+### Features
+
+* Handle State backends in CLI for v3 protocol ([#11899](https://github.com/cloudquery/cloudquery/issues/11899)) ([91b1b75](https://github.com/cloudquery/cloudquery/commit/91b1b75ef15ab31cd7b552ad72ec40ca52d7f59f))
+* Handle State backends in CLI for v3 protocol ([#11899](https://github.com/cloudquery/cloudquery/issues/11899)) ([ce0dd7e](https://github.com/cloudquery/cloudquery/commit/ce0dd7ead2abc802de8a70083e81c557758737f6))
+
+
+### Bug Fixes
+
+* **deps:** Update github.com/cloudquery/arrow/go/v13 digest to df3b664 ([#11882](https://github.com/cloudquery/cloudquery/issues/11882)) ([9635b22](https://github.com/cloudquery/cloudquery/commit/9635b22b10a2cd9ca0f91819cffb7f4ba75dc2d9))
+
+## [3.7.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.6.1...cli-v3.7.0) (2023-07-03)
+
+
+### Features
+
+* Support state backend in proto v3 ([#11896](https://github.com/cloudquery/cloudquery/issues/11896)) ([8674314](https://github.com/cloudquery/cloudquery/commit/867431438761242ccbc763fbce96c04a49c2ade7))
+
+
+### Bug Fixes
+
+* **cli:** Add variable support ([#11870](https://github.com/cloudquery/cloudquery/issues/11870)) ([68973c4](https://github.com/cloudquery/cloudquery/commit/68973c4f269744e988df5722693e29656b8f9939))
+* **deps:** Update github.com/apache/arrow/go/v13 digest to 5a06b2e ([#11857](https://github.com/cloudquery/cloudquery/issues/11857)) ([43c2f5f](https://github.com/cloudquery/cloudquery/commit/43c2f5f3a893e5286f67c4943a9d1bc2736e2aeb))
+* Make sure variables start with @[@plugins](https://github.com/plugins). ([#11888](https://github.com/cloudquery/cloudquery/issues/11888)) ([6e1ece9](https://github.com/cloudquery/cloudquery/commit/6e1ece9d1053df63eeebe18dcd21eedbe7092a7d))
+
+## [3.6.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.6.0...cli-v3.6.1) (2023-06-30)
+
+
+### Bug Fixes
+
+* **cli:** Fix sync in protov3 ([#11822](https://github.com/cloudquery/cloudquery/issues/11822)) ([9a9c202](https://github.com/cloudquery/cloudquery/commit/9a9c20207c8ca777b9f4bafa9c960406e8f25a17))
+
+## [3.6.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.5.4...cli-v3.6.0) (2023-06-28)
+
+
+### Features
+
+* **cli:** Upgrade to SDK v4, protocol v3 ([#11683](https://github.com/cloudquery/cloudquery/issues/11683)) ([1593f2d](https://github.com/cloudquery/cloudquery/commit/1593f2dcfe4b9407cd3157ed871e5d8814b9104b))
+
+
+### Bug Fixes
+
+* CLI v4: issue config deprecation warnings, pass options to plugin-level spec ([#11766](https://github.com/cloudquery/cloudquery/issues/11766)) ([16264a0](https://github.com/cloudquery/cloudquery/commit/16264a0b0c4325ef6c93c6b56a2c4e1d3de2ead1))
+* **CLI:** Multiple migrations ([#11791](https://github.com/cloudquery/cloudquery/issues/11791)) ([df01ac4](https://github.com/cloudquery/cloudquery/commit/df01ac4e42005f87a47edf2dd7300d729300dc31))
+* **cli:** Set SkipDependentTables, DeterministicCqId ([#11759](https://github.com/cloudquery/cloudquery/issues/11759)) ([2bcb1c9](https://github.com/cloudquery/cloudquery/commit/2bcb1c90889042f7a0a64160b8c7fddf8cca23b4))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.2.0 ([#11720](https://github.com/cloudquery/cloudquery/issues/11720)) ([7ef521d](https://github.com/cloudquery/cloudquery/commit/7ef521db1423c6f0de197b08c73adf22c896f999))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.2.1 ([#11722](https://github.com/cloudquery/cloudquery/issues/11722)) ([309be72](https://github.com/cloudquery/cloudquery/commit/309be7276d7de157013c281b6fb3934513898b3f))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.3.3 ([#11726](https://github.com/cloudquery/cloudquery/issues/11726)) ([f0ca611](https://github.com/cloudquery/cloudquery/commit/f0ca61195014bde707761a15efa27a92955b59db))
+* **deps:** Update module github.com/cloudquery/plugin-pb-go to v1.3.4 ([#11753](https://github.com/cloudquery/cloudquery/issues/11753)) ([cd4fe1c](https://github.com/cloudquery/cloudquery/commit/cd4fe1c54f85f8511252bebd5671361618ddb0d3))
+
+## [3.5.4](https://github.com/cloudquery/cloudquery/compare/cli-v3.5.3...cli-v3.5.4) (2023-06-20)
+
+
+### Bug Fixes
+
+* **deps:** Update `github.com/cloudquery/plugin-pb-go` to `v1.1.0` ([333e122](https://github.com/cloudquery/cloudquery/commit/333e12233ad2bc84ef83f434ee7b14515951448f))
+
+## [3.5.3](https://github.com/cloudquery/cloudquery/compare/cli-v3.5.2...cli-v3.5.3) (2023-06-15)
+
+
+### Bug Fixes
+
+* Fix syncing multiple sources to multiple non-overlapping destinations ([#11612](https://github.com/cloudquery/cloudquery/issues/11612)) ([c9a5c42](https://github.com/cloudquery/cloudquery/commit/c9a5c42fdc03eb28c5ffa54fc17ec4093af0ad27))
+
+## [3.5.2](https://github.com/cloudquery/cloudquery/compare/cli-v3.5.1...cli-v3.5.2) (2023-06-13)
+
+
+### Bug Fixes
+
+* **cli:** Print full destinations string during sync ([#11437](https://github.com/cloudquery/cloudquery/issues/11437)) ([29e8503](https://github.com/cloudquery/cloudquery/commit/29e85031ab8208d28f2b26d0cc84746de32b0bbc))
+* **cli:** Propagate destinations errors ([#11445](https://github.com/cloudquery/cloudquery/issues/11445)) ([fcc2289](https://github.com/cloudquery/cloudquery/commit/fcc22898489c89f65e17860b75f9f90b85b15eba))
+
+## [3.5.1](https://github.com/cloudquery/cloudquery/compare/cli-v3.5.0...cli-v3.5.1) (2023-06-06)
+
+
+### Bug Fixes
+
+* **cli-deps:** Update plugin-pb-go to 1.0.9 ([#11239](https://github.com/cloudquery/cloudquery/issues/11239)) ([5f159a7](https://github.com/cloudquery/cloudquery/commit/5f159a734f8d03012e25201861c77a6d6ee0dd53))
+* **deps:** Update golang.org/x/exp digest to 2e198f4 ([#11155](https://github.com/cloudquery/cloudquery/issues/11155)) ([c46c62b](https://github.com/cloudquery/cloudquery/commit/c46c62b68692f527485d7f4b84265abc5dc1142c))
+* **deps:** Update google.golang.org/genproto digest to e85fd2c ([#11156](https://github.com/cloudquery/cloudquery/issues/11156)) ([dbe7e92](https://github.com/cloudquery/cloudquery/commit/dbe7e9293d693a6821570e0e0b80202a936b6d3c))
+
 ## [3.5.0](https://github.com/cloudquery/cloudquery/compare/cli-v3.4.0...cli-v3.5.0) (2023-05-25)
 
 

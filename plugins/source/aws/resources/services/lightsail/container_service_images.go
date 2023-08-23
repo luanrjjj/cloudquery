@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/lightsail"
 	"github.com/aws/aws-sdk-go-v2/service/lightsail/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func containerServiceImages() *schema.Table {
@@ -18,7 +18,6 @@ func containerServiceImages() *schema.Table {
 		Description: `https://docs.aws.amazon.com/lightsail/2016-11-28/api-reference/API_ContainerImage.html`,
 		Resolver:    fetchLightsailContainerServiceImages,
 		Transform:   transformers.TransformWithStruct(&types.ContainerImage{}),
-		Multiplex:   client.ServiceAccountRegionMultiplexer(tableName, "lightsail"),
 		Columns: []schema.Column{
 			client.DefaultAccountIDColumn(false),
 			client.DefaultRegionColumn(false),
@@ -36,10 +35,10 @@ func fetchLightsailContainerServiceImages(ctx context.Context, meta schema.Clien
 	input := lightsail.GetContainerImagesInput{
 		ServiceName: r.ContainerServiceName,
 	}
-	c := meta.(*client.Client)
-	svc := c.Services().Lightsail
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceLightsail).Lightsail
 	deployments, err := svc.GetContainerImages(ctx, &input, func(options *lightsail.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err

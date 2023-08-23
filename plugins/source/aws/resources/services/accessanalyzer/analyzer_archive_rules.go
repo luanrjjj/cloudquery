@@ -7,8 +7,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/accessanalyzer"
 	"github.com/aws/aws-sdk-go-v2/service/accessanalyzer/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func analyzerArchiveRules() *schema.Table {
@@ -31,15 +31,15 @@ func analyzerArchiveRules() *schema.Table {
 
 func fetchAccessanalyzerAnalyzerArchiveRules(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	analyzer := parent.Item.(types.AnalyzerSummary)
-	c := meta.(*client.Client)
-	svc := c.Services().Accessanalyzer
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceAccessanalyzer).Accessanalyzer
 	config := accessanalyzer.ListArchiveRulesInput{
 		AnalyzerName: analyzer.Name,
 	}
 	paginator := accessanalyzer.NewListArchiveRulesPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *accessanalyzer.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err

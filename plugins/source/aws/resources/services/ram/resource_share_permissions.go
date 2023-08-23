@@ -4,15 +4,15 @@ import (
 	"context"
 	"strconv"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ram"
 	"github.com/aws/aws-sdk-go-v2/service/ram/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func resourceSharePermissions() *schema.Table {
@@ -35,20 +35,25 @@ func resourceSharePermissions() *schema.Table {
 				Type:     sdkTypes.ExtensionTypes.JSON,
 				Resolver: resolveResourceSharePermissionDetailPermission,
 			},
+			{
+				Name:     "tags",
+				Type:     sdkTypes.ExtensionTypes.JSON,
+				Resolver: client.ResolveTags,
+			},
 		},
 	}
 }
 
 func fetchRamResourceSharePermissions(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
+	cl := meta.(*client.Client)
 	input := &ram.ListResourceSharePermissionsInput{
 		MaxResults:       aws.Int32(500),
 		ResourceShareArn: resource.Item.(types.ResourceShare).ResourceShareArn,
 	}
-	paginator := ram.NewListResourceSharePermissionsPaginator(meta.(*client.Client).Services().Ram, input)
+	paginator := ram.NewListResourceSharePermissionsPaginator(meta.(*client.Client).Services(client.AWSServiceRam).Ram, input)
 	for paginator.HasMorePages() {
 		response, err := paginator.NextPage(ctx, func(options *ram.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
 			return err
@@ -60,6 +65,7 @@ func fetchRamResourceSharePermissions(ctx context.Context, meta schema.ClientMet
 
 func resolveResourceSharePermissionDetailPermission(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource, c schema.Column) error {
 	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceRam).Ram
 	permission := resource.Item.(types.ResourceSharePermissionSummary)
 	version, err := strconv.ParseInt(aws.ToString(permission.Version), 10, 32)
 	if err != nil {
@@ -69,7 +75,7 @@ func resolveResourceSharePermissionDetailPermission(ctx context.Context, meta sc
 		PermissionArn:     permission.Arn,
 		PermissionVersion: aws.Int32(int32(version)),
 	}
-	response, err := meta.(*client.Client).Services().Ram.GetPermission(ctx, input, func(options *ram.Options) {
+	response, err := svc.GetPermission(ctx, input, func(options *ram.Options) {
 		options.Region = cl.Region
 	})
 	if err != nil {

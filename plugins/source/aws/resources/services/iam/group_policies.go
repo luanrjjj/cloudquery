@@ -5,14 +5,14 @@ import (
 	"encoding/json"
 	"net/url"
 
-	sdkTypes "github.com/cloudquery/plugin-sdk/v3/types"
+	sdkTypes "github.com/cloudquery/plugin-sdk/v4/types"
 
 	"github.com/apache/arrow/go/v13/arrow"
 	"github.com/aws/aws-sdk-go-v2/service/iam"
 	"github.com/aws/aws-sdk-go-v2/service/iam/types"
 	"github.com/cloudquery/cloudquery/plugins/source/aws/client"
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 )
 
 func groupPolicies() *schema.Table {
@@ -41,8 +41,8 @@ func groupPolicies() *schema.Table {
 }
 
 func fetchIamGroupPolicies(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Iam
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceIam).Iam
 	group := parent.Item.(types.Group)
 	config := iam.ListGroupPoliciesInput{
 		GroupName: group.GroupName,
@@ -50,10 +50,10 @@ func fetchIamGroupPolicies(ctx context.Context, meta schema.ClientMeta, parent *
 	paginator := iam.NewListGroupPoliciesPaginator(svc, &config)
 	for paginator.HasMorePages() {
 		page, err := paginator.NextPage(ctx, func(options *iam.Options) {
-			options.Region = c.Region
+			options.Region = cl.Region
 		})
 		if err != nil {
-			if c.IsNotFoundError(err) {
+			if cl.IsNotFoundError(err) {
 				return nil
 			}
 			return err
@@ -65,13 +65,13 @@ func fetchIamGroupPolicies(ctx context.Context, meta schema.ClientMeta, parent *
 }
 
 func getGroupPolicy(ctx context.Context, meta schema.ClientMeta, resource *schema.Resource) error {
-	c := meta.(*client.Client)
-	svc := c.Services().Iam
+	cl := meta.(*client.Client)
+	svc := cl.Services(client.AWSServiceIam).Iam
 	p := resource.Item.(string)
 	group := resource.Parent.Item.(types.Group)
 
 	policyResult, err := svc.GetGroupPolicy(ctx, &iam.GetGroupPolicyInput{PolicyName: &p, GroupName: group.GroupName}, func(options *iam.Options) {
-		options.Region = c.Region
+		options.Region = cl.Region
 	})
 	if err != nil {
 		return err
