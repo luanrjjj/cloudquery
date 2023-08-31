@@ -16,10 +16,16 @@ jobs:
         with:
           fetch-depth: 2
       - name: Set up Go 1.x
+<<<<<<< Updated upstream
         uses: actions/setup-go@v3
         with:
           go-version-file: go.mod
           cache: true
+=======
+        uses: actions/setup-go@v4
+        with:
+          go-version-file: go.mod
+>>>>>>> Stashed changes
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:

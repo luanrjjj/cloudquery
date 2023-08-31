@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"fmt"
+	"os"
 
 	"github.com/cloudquery/plugin-pb-go/specs"
 	"github.com/cloudquery/plugin-sdk/v3/plugins/source"
@@ -13,65 +14,36 @@ import (
 )
 
 type Client struct {
-	logger             zerolog.Logger
-	Accounts           []Account
-	Services           *Services
+	logger zerolog.Logger
+
+	Accounts []Account
+
 	multiplexedAccount Account
-}
-
-type Services struct {
-	Alert     AlertService
-	APM       ApplicationService
-	Plugin    PluginService
-	Synthetic SyntheticService
-}
-
-func initServices(apiClient *newrelic.NewRelic) *Services {
-	return &Services{
-		Alert:     &apiClient.Alerts,
-		APM:       &apiClient.APM,
-		Plugin:    &apiClient.Plugins,
-		Synthetic: &apiClient.Synthetics,
-	}
+	NRServices         NewRelicServices
 }
 
 func (c *Client) ID() string {
 	// TODO: Change to either your plugin name or a unique dynamic identifier
-	return c.multiplexedAccount.Name
-
-}
-
-func (c *Client) withAccount(account Account) schema.ClientMeta {
-	return &Client{
-		logger:             c.logger,
-		Services:           c.Services,
-		Accounts:           c.Accounts,
-		multiplexedAccount: account,
-	}
+	return "newrelic"
 }
 
 func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source.Options) (schema.ClientMeta, error) {
-	newRelicSpec := &Spec{}
+	var pluginSpec Spec
 
-	if err := s.UnmarshalSpec(newRelicSpec); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
-	}
-
-	if len(newRelicSpec.Accounts) == 0 {
-		return nil, fmt.Errorf("no new relic accounts configured")
-	}
-
-	token := "NRAK-J1UFG2UYBY8PL3II0ZA5P2YD4W3"
-	configuration := newrelic.ConfigPersonalAPIKey(token)
+	configuration := newrelic.ConfigPersonalAPIKey(os.Getenv("NEW_RELIC_API_KEY"))
 	apiClient, err := newrelic.New(configuration)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to create newrelic client: %w", err)
 	}
 
+	if err := s.UnmarshalSpec(&pluginSpec); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal plugin spec: %w", err)
+	}
+
 	client := Client{
-		logger:   logger,
-		Services: initServices(apiClient),
+		logger:     logger,
+		NRServices: NewRelicServices(apiClient),
 	}
 
 	return &client, nil

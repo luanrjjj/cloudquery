@@ -1,7 +1,12 @@
 # CloudQuery newrelic Source Plugin
 
+<<<<<<< Updated upstream
 [![test](https://github.com/newrelic/cq-source-newrelic/actions/workflows/test.yaml/badge.svg)](https://github.com/newrelic/cq-source-newrelic/actions/workflows/test.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/newrelic/cq-source-newrelic)](https://goreportcard.com/report/github.com/newrelic/cq-source-newrelic)
+=======
+[![test](https://github.com/cloudquery/cq-source-newrelic/actions/workflows/test.yaml/badge.svg)](https://github.com/cloudquery/cq-source-newrelic/actions/workflows/test.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cloudquery/cq-source-newrelic)](https://goreportcard.com/report/github.com/cloudquery/cq-source-newrelic)
+>>>>>>> Stashed changes
 
 A newrelic source plugin for CloudQuery that loads data from newrelic to any database, data warehouse or data lake supported by [CloudQuery](https://www.cloudquery.io/), such as PostgreSQL, BigQuery, Athena, and many more.
 
@@ -19,7 +24,11 @@ The following source configuration file will sync to a PostgreSQL database. See 
 kind: source
 spec:
   name: "newrelic"
+<<<<<<< Updated upstream
   path: "newrelic/newrelic"
+=======
+  path: "cloudquery/newrelic"
+>>>>>>> Stashed changes
   version: "${VERSION}"
   destinations:
     - "postgresql"
