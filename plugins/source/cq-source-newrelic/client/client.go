@@ -61,6 +61,7 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 		return nil, fmt.Errorf("no new relic accounts configured")
 	}
 
+	token := "NRAK-J1UFG2UYBY8PL3II0ZA5P2YD4W3"
 	configuration := newrelic.ConfigPersonalAPIKey(token)
 	apiClient, err := newrelic.New(configuration)
 
