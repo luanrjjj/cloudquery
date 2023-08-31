@@ -1,9 +1,0 @@
-kind: destination
-spec:
-  name: sqlite
-  path: cloudquery/sqlite
-  version: "v2.2.1"
-#  migration_mode: "forced"
-  spec:
-#
-    connection_string: ./db.sql
